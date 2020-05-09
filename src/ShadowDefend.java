@@ -12,6 +12,7 @@ public class ShadowDefend extends AbstractGame {
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 800;
     private static final int ORIGIN = 0;
+    private static final int FPS = 60;
     private long frameCount = 0;
     private static long fpsStart;
     private double waveCount = 0;
@@ -74,7 +75,7 @@ public class ShadowDefend extends AbstractGame {
         if(fpsDiff !=0)
         {
             fps = frameCount/ fpsDiff;
-            //System.out.println(fps);
+            System.out.println(fps);
             // Running at 144 fps on my 144 hz monitor :(
         }
     }
@@ -84,7 +85,7 @@ public class ShadowDefend extends AbstractGame {
         // Ends the wave if the slicer list is empty, if we have multiple enemies we will need a list of all enemies
         levelList.get(currentLevel).endWave();
         // Spawns a new slicer if f/s*s = f
-        if(waveCount >= fps*SLICER_DELAY && Enemy.getNumEnemies() < NUM_SLICERS)
+        if(waveCount >= FPS*SLICER_DELAY && Enemy.getNumEnemies() < NUM_SLICERS)
         {
             // Reset waveCount
             waveCount = 0;
