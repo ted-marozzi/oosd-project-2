@@ -7,7 +7,7 @@ import java.util.List;
 
 // Enemy class, if we have multiple classes,
 //      I will make a new slicer class that extends a base enemy class
-public class Enemy {
+public class Slicer {
     private Image player;
     private Point currentPos;
     private int pointsReached = 0;
@@ -16,7 +16,7 @@ public class Enemy {
     private DrawOptions drawOptions;
     private boolean isAlive = true;
 
-    public Enemy(String imgPath, Point start) // Number one
+    public Slicer(String imgPath, Point start) // Number one
     {
         this.player = new Image(imgPath);
 
@@ -88,11 +88,11 @@ public class Enemy {
 
 
     public static int getNumEnemies() {
-        return Enemy.numEnemies;
+        return Slicer.numEnemies;
     }
 
     public static void setNumEnemies(int numEnemies) {
-        Enemy.numEnemies = numEnemies;
+        Slicer.numEnemies = numEnemies;
     }
 
 

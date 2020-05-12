@@ -20,7 +20,6 @@ public class Level
         this.map = new TiledMap(levelPath);
         polyLines = map.getAllPolylines().get(0);
         start = polyLines.get(0);
-
     }
 
     // Initiates a wave
@@ -31,29 +30,22 @@ public class Level
             if(!this.getIsWave())
             {
                 ShadowDefend.addSlicer(start);
-
             }
-
             this.isWave = true;
-
         }
     }
 
     // Ends a wave
     public void endWave()
     {
-        if(ShadowDefend.getSlicerList().isEmpty())
+        if(ShadowDefend.getSlicersList().isEmpty())
         {
             // Set to zero so next wave can count correctly
-            Enemy.setNumEnemies(0);
+            Slicer.setNumEnemies(0);
             this.isWave = false;
             close();
         }
     }
-
-
-
-
 
     // Get and set methods
     public TiledMap getMap() {
