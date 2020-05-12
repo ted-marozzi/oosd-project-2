@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Scanner;
 
 public class ShadowDefend extends AbstractGame {
     // Constants
@@ -37,7 +36,7 @@ public class ShadowDefend extends AbstractGame {
     // Lists to keep track of how many levels and slicers there are
     private static ArrayList<Slicer> slicersList = new ArrayList<>();
     private static ArrayList<Level> levelsList = new ArrayList<>();
-    private static ArrayList<Wave> wavesList = new ArrayList<>();
+    private static WaveManager waveManager;
 
     // Constructor
     public ShadowDefend() {
@@ -57,29 +56,8 @@ public class ShadowDefend extends AbstractGame {
 
         try
         {
-            FileInputStream fis = new FileInputStream(WAVE_PATH);
-            Scanner sc = new Scanner(fis);
-            int prevWaveNum = 1;
-            ArrayList<String> waveEventList = new ArrayList<>();
-            while(sc.hasNextLine())
-            {
-                String waveEvent = sc.nextLine();
-                int waveNum = Integer.parseInt(String.valueOf(waveEvent.charAt(0)));
-                if(waveNum == prevWaveNum)
-                {
-                    waveEventList.add(waveEvent);
-                }
-                else
-                {
-                    Wave wave = new Wave(waveEventList);
-                    wavesList.add(wave);
-                }
-
-                prevWaveNum = waveNum;
-            }
-
-            //levelList.add(new Level(WAVE_PATH));
-
+            FileInputStream wavesStream = new FileInputStream(WAVE_PATH);
+            waveManager = new WaveManager(wavesStream);
         }
         catch(IOException e)
         {
