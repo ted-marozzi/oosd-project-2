@@ -3,18 +3,22 @@ import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Vector2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // Enemy class, if we have multiple classes,
 //      I will make a new slicer class that extends a base enemy class
-public class Slicer {
+public abstract class Slicer {
+    // Lists to keep track of how many levels and slicers there are
+    private static ArrayList<Slicer> slicersList = new ArrayList<>();
     private Image player;
     private Point currentPos;
     private int pointsReached = 0;
-    private static int numEnemies = 0;
+
 
     private DrawOptions drawOptions;
     private boolean isAlive = true;
+    private static final String SLICER_PATH = "res/images/slicer.png";
 
     public Slicer(String imgPath, Point start) // Number one
     {
@@ -22,7 +26,7 @@ public class Slicer {
 
         moveTo(start);
         drawOptions = new DrawOptions();
-        numEnemies++;
+        slicersList.add(this);
     }
 
     // Moves player to PlayerPoint, with draw options setting rotation
@@ -56,9 +60,11 @@ public class Slicer {
         }
         return ((polyLines.get(this.pointsReached)).asVector().sub(this.currentPos.asVector())).normalised();
     }
-    // Updates an individua enemy dependant on the position
-    public void update(int timeScale, List<Point> polyLines)
+    // Updates an individual enemy dependant on the position
+    public void update(int timeScale)
     {
+
+        List<Point> polyLines = Level.getCurrentLevel().getPolyLines();
         if(this.pointsReached < polyLines.size()-1)
         {
             Vector2 directionVec = calcDirectionVec(polyLines, timeScale);
@@ -82,18 +88,15 @@ public class Slicer {
         }
     }
 
-    public boolean isAlive() {
-        return isAlive;
+    public static ArrayList<Slicer> getSlicersList() {
+        return slicersList;
     }
 
-
-    public static int getNumEnemies() {
-        return Slicer.numEnemies;
+    public static void update()
+    {
+        for(Slicer slicer:slicersList)
+        {
+            slicer.update(ShadowDefend.getTimeScale());
+        }
     }
-
-    public static void setNumEnemies(int numEnemies) {
-        Slicer.numEnemies = numEnemies;
-    }
-
-
 }

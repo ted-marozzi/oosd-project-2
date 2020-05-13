@@ -1,7 +1,10 @@
 import bagel.util.Point;
 
 public class MegaSlicer extends Slicer {
-    public MegaSlicer(String imgPath, Point start) {
-        super(imgPath, start);
+    private static final String IMG_PATH = "res/images/megaslicer.png";
+
+    public MegaSlicer(Point start) {
+
+        super(IMG_PATH, start);
     }
 }
