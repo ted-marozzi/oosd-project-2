@@ -10,9 +10,16 @@ import java.util.List;
 // Enemy class, if we have multiple classes,
 //      I will make a new slicer class that extends a base enemy class
 public abstract class Slicer {
+
+    //
+    private double health, speed, reward, penalty;
+    private String imgPath;
+
+
+
     // Lists to keep track of how many levels and slicers there are
     private static final ArrayList<Slicer> slicerList = new ArrayList<>();
-    private final Image player;
+    private Image slicerImg;
     private Point currentPos;
     private int pointsReached = 0;
 
@@ -20,40 +27,40 @@ public abstract class Slicer {
     private final DrawOptions drawOptions;
     private boolean isAlive = true;
 
-    public Slicer(String imgPath, Point start) // Number one
-    {
-        this.player = new Image(imgPath);
 
-        moveTo(start);
+    protected Slicer()
+    {
         drawOptions = new DrawOptions();
         slicerList.add(this);
     }
+
+
 
     // Moves player to PlayerPoint, with draw options setting rotation
     // Moves player when given a rotation argument
     public void moveTo(Point playerPoint, DrawOptions drawOptions) {
         this.currentPos = playerPoint;
-        player.draw(currentPos.x, currentPos.y, drawOptions);
+        slicerImg.draw(currentPos.x, currentPos.y, drawOptions);
 
     }
     // Moves player to given point when no rotation is applied
     public void moveTo(Point playerPoint) {
         this.currentPos = playerPoint;
-        player.draw(currentPos.x, currentPos.y);
+        slicerImg.draw(currentPos.x, currentPos.y);
 
     }
 
     // Adds the unit vector direction to current point
-    private Point calcNextPos(Vector2 direction, int timeScale)
+    private Point calcNextPos(Vector2 direction, double timeScale)
     {
-        return this.currentPos.asVector().add(direction.mul(timeScale)).asPoint();
+        return this.currentPos.asVector().add(direction.mul(speed*timeScale)).asPoint();
     }
 
     // Calculates the unit direction vector
-    private Vector2 calcDirectionVec(List<Point> polyLines, int timeScale)
+    private Vector2 calcDirectionVec(List<Point> polyLines, double timeScale)
     {
 
-        if(this.currentPos.distanceTo(polyLines.get(this.pointsReached)) < (double)timeScale/2)
+        if(this.currentPos.distanceTo(polyLines.get(this.pointsReached)) < (double)timeScale*speed/2)
         {
             // Increase the points reached by the player by 1
             this.pointsReached = this.pointsReached+1;
@@ -61,7 +68,7 @@ public abstract class Slicer {
         return ((polyLines.get(this.pointsReached)).asVector().sub(this.currentPos.asVector())).normalised();
     }
     // Updates an individual enemy dependant on the position
-    public void update(int timeScale)
+    public void update(double timeScale)
     {
 
         List<Point> polyLines = Level.getCurrentLevel().getPolyLines();
@@ -106,5 +113,27 @@ public abstract class Slicer {
             }
         }
     }
+
+    protected void setHealth(double health) {
+        this.health = health;
+    }
+
+    protected void setPenalty(double penalty)
+    {
+        this.penalty = penalty;
+    }
+
+
+    protected void setSlicerImg(String imgPath)
+    {
+        this.slicerImg = new Image(imgPath);
+    }
+
+    protected void setSpeed(double speed)
+    {
+        this.speed = speed;
+    }
+
+
 
 }

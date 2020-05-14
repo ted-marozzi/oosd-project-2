@@ -2,21 +2,14 @@
 import bagel.AbstractGame;
 import bagel.Input;
 import bagel.Keys;
-import bagel.util.Point;
 // Java Imports
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Timer;
+
 
 public class ShadowDefend extends AbstractGame {
     // Timing
-    private static int timeScale = 1;
+    private static double timeScale = 1;
     FpsCalc fpsCalc;
+
 
     private static WaveManager waveManager;
 
@@ -42,14 +35,15 @@ public class ShadowDefend extends AbstractGame {
         // Draws the current level
         Level.getCurrentLevel().draw();
 
-        if(input.wasPressed(Keys.S) && !waveManager.getCurrentWaveEvent().getInProgress() && Slicer.getSlicerList().isEmpty())
-        {
-            waveManager.beginWaveEvent();
-        }
+        waveManager.beginWave(input);
 
         if( waveManager.getCurrentWaveEvent().getInProgress() == true )
             waveManager.updateWaveEvent();
         Slicer.update();
+        if(waveManager.getEndOfWave() == true && Slicer.getSlicerList().isEmpty())
+            Level.setStatus(Level.getAWAITING());
+
+        Level.drawPanels();
 
         fpsCalc.calc();
     }
@@ -64,7 +58,7 @@ public class ShadowDefend extends AbstractGame {
 
     }
 
-    public static int getTimeScale() {
+    public static double getTimeScale() {
         return timeScale;
     }
 }

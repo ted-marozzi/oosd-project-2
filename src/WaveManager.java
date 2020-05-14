@@ -1,3 +1,6 @@
+import bagel.Input;
+import bagel.Keys;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -5,15 +8,17 @@ import java.util.Scanner;
 
 public final class WaveManager {
 
-    ArrayList<WaveEvent> waveEvents = new ArrayList<>();
-    private static int currentWaveEventIndex = 0;
+    private static ArrayList<WaveEvent> waveEvents = new ArrayList<>();
+    private static int waveEventIndex = 0;
     private static final String SPAWN = "spawn";
     private static final String DELAY = "delay";
 
     private static final String WAVE_PATH = "res/levels/waves.txt";
-    private static final boolean isWave = false;
+    private static int currentWaveNum = 0;
+    private static boolean endOfWave = true;
 
 
+    // TODO look into making this static with  no constructor
     public WaveManager() {
 
         FileInputStream wavesStream = null;
@@ -37,54 +42,70 @@ public final class WaveManager {
 
         return waveEvents.get(index);
     }
-    public WaveEvent getCurrentWaveEvent() {
+    // The current wave event
+    public static WaveEvent getCurrentWaveEvent() {
 
-        return waveEvents.get(currentWaveEventIndex);
+        return waveEvents.get(waveEventIndex);
     }
 
-    public static int getCurrentWaveEventIndex() {
-        return currentWaveEventIndex;
+    public static int getWaveEventIndex() {
+        return waveEventIndex;
     }
-
+    // begins a single wave event
     public void beginWaveEvent()
     {
-        WaveEvent wave = waveEvents.get(currentWaveEventIndex);
+
+        WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(true);
         wave.startTimer();
+        endOfWave = true;
 
         if(wave.getAction().equals(SPAWN))
         {
             wave.spawnSlicer();
         }
+        currentWaveNum++;
 
     }
-
+    // Ends a single wave event
     public void endWaveEvent()
     {
-        WaveEvent wave = waveEvents.get(currentWaveEventIndex);
+        WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(false);
-        currentWaveEventIndex++;
+        waveEventIndex++;
 
+        if(waveEvents.get(waveEventIndex).getWaveNumber() == waveEvents.get(waveEventIndex - 1).getWaveNumber())
+        {
+            beginWaveEvent();
+            currentWaveNum--;
+        }
+        else
+        {
+            endOfWave = true;
+        }
 
     }
 
 
     public void updateWaveEvent() {
-        if(! (currentWaveEventIndex == waveEvents.size() - 1) )
+        // Ensures after all waves are finished we don't try to update
+        if(! (waveEventIndex == waveEvents.size() - 1) )
         {
-
-            WaveEvent wave = waveEvents.get(currentWaveEventIndex);
+            WaveEvent wave = waveEvents.get(waveEventIndex);
             if(wave.getAction().equals(SPAWN))
             {
-                //System.out.println(wave.checkTimer());
-                if(wave.checkTimer() >= wave.getSpawnDelay()/ShadowDefend.getTimeScale() && Slicer.getSlicerList().size() < wave.getNumToSpawn())
+
+                if(wave.checkTimer() >= wave.getSpawnDelay()/ShadowDefend.getTimeScale() && wave.getNumSpawned() < wave.getNumToSpawn())
                 {
                     wave.resetTimer();
                     wave.spawnSlicer();
                 }
 
-                if(Slicer.getSlicerList().size() >= wave.getNumToSpawn() )
+                if(wave.getNumSpawned()  >= wave.getNumToSpawn() )
+                {
                     endWaveEvent();
+                }
+
 
             }
 
@@ -93,6 +114,7 @@ public final class WaveManager {
                 if(wave.checkTimer() >= wave.getDelay()/ShadowDefend.getTimeScale())
                 {
                     endWaveEvent();
+
                 }
 
             }
@@ -102,14 +124,42 @@ public final class WaveManager {
 
     }
 
+    // Using this to avoid having to copys of this static
     public static String getDELAY() {
         return DELAY;
-
     }
 
     public static String getSPAWN() {
         return SPAWN;
     }
+    public int getNextWaveEventNum()
+    {
+        return waveEvents.get(waveEventIndex + 1).getWaveNumber();
+    }
+    public int getWaveEventNum()
+    {
+        return waveEvents.get(waveEventIndex).getWaveNumber();
+    }
+
+    public static int getCurrentWaveNum() {
+        return currentWaveNum;
+    }
+    // begins a wave
+    public void beginWave(Input input)
+    {
+        if(input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && Slicer.getSlicerList().isEmpty())
+        {
+            Level.setStatus("Wave In Progress");
+            beginWaveEvent();
+        }
+
+    }
+
+    public boolean getEndOfWave()
+    {
+        return endOfWave;
+    }
+
 }
 
 

@@ -7,6 +7,7 @@ public class WaveEvent {
     private int numToSpawn;
     private String slicerType;
     private int spawnDelay;
+    private int numSpawned = 0;
 
     private boolean inProgress = false;
     private StopWatch stopWatch;
@@ -76,6 +77,7 @@ public class WaveEvent {
         {
             Slicer slicer = new ApexSlicer(Level.getCurrentLevel().getStart());
         }
+        numSpawned++;
 
     }
 
@@ -97,5 +99,9 @@ public class WaveEvent {
 
     public long getDelay() {
         return delay;
+    }
+
+    public int getNumSpawned() {
+        return numSpawned;
     }
 }
