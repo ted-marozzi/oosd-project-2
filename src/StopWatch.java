@@ -9,7 +9,7 @@ public class StopWatch {
 
     public long stop()
     {
-        return start - System.nanoTime();
+        return System.nanoTime() - start;
     }
 
     public void reset()
