@@ -1,21 +1,17 @@
-import bagel.Input;
-import bagel.Keys;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static bagel.Window.close;
-
 public final class WaveManager {
 
     ArrayList<WaveEvent> waveEvents = new ArrayList<>();
-    private final int currentWaveEventIndex = 0;
+    private static int currentWaveEventIndex = 0;
     private static final String SPAWN = "spawn";
+    private static final String DELAY = "delay";
 
     private static final String WAVE_PATH = "res/levels/waves.txt";
-    private static boolean isWave = false;
+    private static final boolean isWave = false;
 
 
     public WaveManager() {
@@ -46,10 +42,9 @@ public final class WaveManager {
         return waveEvents.get(currentWaveEventIndex);
     }
 
-
-
-
-
+    public static int getCurrentWaveEventIndex() {
+        return currentWaveEventIndex;
+    }
 
     public void beginWaveEvent()
     {
@@ -62,26 +57,58 @@ public final class WaveManager {
             wave.spawnSlicer();
         }
 
-        return;
+    }
+
+    public void endWaveEvent()
+    {
+        WaveEvent wave = waveEvents.get(currentWaveEventIndex);
+        wave.setInProgress(false);
+        currentWaveEventIndex++;
+
+
     }
 
 
     public void updateWaveEvent() {
-
-        WaveEvent wave = waveEvents.get(currentWaveEventIndex);
-        if(wave.getAction().equals(SPAWN))
+        if(! (currentWaveEventIndex == waveEvents.size() - 1) )
         {
 
-            if(wave.checkTimer() >= wave.getSpawnDelay())
+            WaveEvent wave = waveEvents.get(currentWaveEventIndex);
+            if(wave.getAction().equals(SPAWN))
             {
-                wave.resetTimer();
-                wave.spawnSlicer();
+                //System.out.println(wave.checkTimer());
+                if(wave.checkTimer() >= wave.getSpawnDelay()/ShadowDefend.getTimeScale() && Slicer.getSlicerList().size() < wave.getNumToSpawn())
+                {
+                    wave.resetTimer();
+                    wave.spawnSlicer();
+                }
+
+                if(Slicer.getSlicerList().size() >= wave.getNumToSpawn() )
+                    endWaveEvent();
+
+            }
+
+            if(wave.getAction().equals(DELAY))
+            {
+                if(wave.checkTimer() >= wave.getDelay()/ShadowDefend.getTimeScale())
+                {
+                    endWaveEvent();
+                }
+
             }
 
         }
 
-        Slicer.update();
 
+    }
+
+    public static String getDELAY() {
+        return DELAY;
+
+    }
+
+    public static String getSPAWN() {
+        return SPAWN;
     }
 }
 

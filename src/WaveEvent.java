@@ -7,8 +7,7 @@ public class WaveEvent {
     private int numToSpawn;
     private String slicerType;
     private int spawnDelay;
-    private static final String SPAWN = "spawn";
-    private static final String DELAY = "delay";
+
     private boolean inProgress = false;
     private StopWatch stopWatch;
 
@@ -18,13 +17,13 @@ public class WaveEvent {
         this.waveNumber = Integer.parseInt(waveEventSplit[0]);
         this.action = waveEventSplit[1];
 
-        if(action.equals(SPAWN))
+        if(action.equals(WaveManager.getSPAWN()))
         {
             this.numToSpawn = Integer.parseInt(waveEventSplit[2]);
             this.slicerType = waveEventSplit[3];
             this.spawnDelay = Integer.parseInt(waveEventSplit[4]);
         }
-        else if(action.equals(DELAY))
+        else if(action.equals(WaveManager.getDELAY()))
         {
             this.delay = Integer.parseInt(waveEventSplit[2]);
         }
@@ -80,6 +79,12 @@ public class WaveEvent {
 
     }
 
+
+
+    public int getNumToSpawn() {
+        return numToSpawn;
+    }
+
     public void resetTimer()
     {
         stopWatch.reset();
@@ -88,5 +93,9 @@ public class WaveEvent {
 
     public int getSpawnDelay() {
         return spawnDelay;
+    }
+
+    public long getDelay() {
+        return delay;
     }
 }

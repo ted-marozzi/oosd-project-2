@@ -14,15 +14,6 @@ import java.util.Iterator;
 import java.util.Timer;
 
 public class ShadowDefend extends AbstractGame {
-
-    private static final int FPS = 60;
-    private double waveCount = 0;
-
-    private int currentWaveEvent;
-
-    private static final double SLICER_DELAY = 5;
-    private static final double NUM_SLICERS = 5;
-
     // Timing
     private static int timeScale = 1;
     FpsCalc fpsCalc;
@@ -51,13 +42,14 @@ public class ShadowDefend extends AbstractGame {
         // Draws the current level
         Level.getCurrentLevel().draw();
 
-        if(input.wasPressed(Keys.S) && waveManager.getCurrentWaveEvent().getInProgress() == false)
+        if(input.wasPressed(Keys.S) && !waveManager.getCurrentWaveEvent().getInProgress() && Slicer.getSlicerList().isEmpty())
         {
             waveManager.beginWaveEvent();
         }
+
         if( waveManager.getCurrentWaveEvent().getInProgress() == true )
             waveManager.updateWaveEvent();
-
+        Slicer.update();
 
         fpsCalc.calc();
     }
@@ -69,7 +61,6 @@ public class ShadowDefend extends AbstractGame {
             timeScale ++;
         if(input.wasPressed(Keys.K) && timeScale > 1)
             timeScale --;
-        return;
 
     }
 

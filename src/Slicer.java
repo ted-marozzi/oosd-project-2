@@ -4,21 +4,21 @@ import bagel.util.Point;
 import bagel.util.Vector2;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 // Enemy class, if we have multiple classes,
 //      I will make a new slicer class that extends a base enemy class
 public abstract class Slicer {
     // Lists to keep track of how many levels and slicers there are
-    private static ArrayList<Slicer> slicersList = new ArrayList<>();
-    private Image player;
+    private static final ArrayList<Slicer> slicerList = new ArrayList<>();
+    private final Image player;
     private Point currentPos;
     private int pointsReached = 0;
 
 
-    private DrawOptions drawOptions;
+    private final DrawOptions drawOptions;
     private boolean isAlive = true;
-    private static final String SLICER_PATH = "res/images/slicer.png";
 
     public Slicer(String imgPath, Point start) // Number one
     {
@@ -26,7 +26,7 @@ public abstract class Slicer {
 
         moveTo(start);
         drawOptions = new DrawOptions();
-        slicersList.add(this);
+        slicerList.add(this);
     }
 
     // Moves player to PlayerPoint, with draw options setting rotation
@@ -85,18 +85,26 @@ public abstract class Slicer {
         else
         {
             isAlive = false;
+
         }
     }
 
-    public static ArrayList<Slicer> getSlicersList() {
-        return slicersList;
+    public static ArrayList<Slicer> getSlicerList() {
+        return slicerList;
     }
 
-    public static void update()
-    {
-        for(Slicer slicer:slicersList)
-        {
+    public static void update() {
+        // Every slicer perform the update and remove dead enemies
+        // Allows for removing enemies if player defeats them also
+        Iterator<Slicer> it = slicerList.iterator();
+        while (it.hasNext()) {
+            Slicer slicer = it.next();
             slicer.update(ShadowDefend.getTimeScale());
+
+            if (!slicer.isAlive) {
+                it.remove();
+            }
         }
     }
+
 }
