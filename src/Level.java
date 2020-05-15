@@ -149,4 +149,15 @@ public class Level
     public static String getAWAITING() {
         return AWAITING;
     }
+
+    public static int getLives()
+    {
+        return lives;
+    }
+
+    public static void setLives(int lives)
+    {
+        Level.lives = lives;
+
+    }
 }

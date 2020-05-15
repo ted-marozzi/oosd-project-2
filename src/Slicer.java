@@ -92,6 +92,7 @@ public abstract class Slicer {
         else
         {
             isAlive = false;
+            Level.setLives((int) (Level.getLives() - this.penalty));
 
         }
     }
