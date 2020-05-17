@@ -110,6 +110,7 @@ public class Level
     // Draws the panels for the game
     public static void drawPanels()
     {
+        //TODO: remove magic numbers
 
         buyPanel.drawFromTopLeft(ORIGIN,ORIGIN);
         statusPanel.drawFromTopLeft(ORIGIN,HEIGHT - 2*statusPanel.getHeight());
@@ -139,6 +140,10 @@ public class Level
 
         String livesStr = "lives: " + lives;
         font.drawString(livesStr, WIDTH-2*font.getWidth(livesStr)/2 - 5, HEIGHT - 35, drawOptions);
+
+
+        String keyBinds = "Key binds:\nS - Start Wave\nL - Increase Timescale\nK - Decrease Timescale";
+        font.drawString(keyBinds, (WIDTH-font.getWidth(keyBinds))/2, 25);
 
     }
 
