@@ -11,14 +11,10 @@ import java.util.List;
 //      I will make a new slicer class that extends a base enemy class
 public abstract class Slicer {
 
-    //
+
     private double health, speed, reward, penalty;
-    private String imgPath;
 
 
-
-    // Lists to keep track of how many levels and slicers there are
-    private static final ArrayList<Slicer> slicerList = new ArrayList<>();
     private Image slicerImg;
     private Point currentPos;
     private int pointsReached = 0;
@@ -28,10 +24,16 @@ public abstract class Slicer {
     private boolean isAlive = true;
 
 
-    protected Slicer()
+    protected Slicer(String imgPath, double health, double speed, double reward, double penalty, Point start)
     {
         drawOptions = new DrawOptions();
-        slicerList.add(this);
+        this.slicerImg = new Image(imgPath);
+        this.health = health;
+        this.speed = speed;
+        this.penalty = penalty;
+        this.reward = reward;
+        moveTo(start);
+        ShadowDefend.getInstance().addSlicer(this);
     }
 
 
@@ -43,6 +45,7 @@ public abstract class Slicer {
         slicerImg.draw(currentPos.x, currentPos.y, drawOptions);
 
     }
+
     // Moves player to given point when no rotation is applied
     public void moveTo(Point playerPoint) {
         this.currentPos = playerPoint;
@@ -60,7 +63,7 @@ public abstract class Slicer {
     private Vector2 calcDirectionVec(List<Point> polyLines, double timeScale)
     {
 
-        if(this.currentPos.distanceTo(polyLines.get(this.pointsReached)) < (double)timeScale*speed/2)
+        if(this.currentPos.distanceTo(polyLines.get(this.pointsReached)) < timeScale *speed/2)
         {
             // Increase the points reached by the player by 1
             this.pointsReached = this.pointsReached+1;
@@ -71,7 +74,7 @@ public abstract class Slicer {
     public void update(double timeScale)
     {
 
-        List<Point> polyLines = Level.getCurrentLevel().getPolyLines();
+        List<Point> polyLines = ShadowDefend.getInstance().getCurrentLevel().getPolyLines();
         if(this.pointsReached < polyLines.size()-1)
         {
             Vector2 directionVec = calcDirectionVec(polyLines, timeScale);
@@ -92,19 +95,16 @@ public abstract class Slicer {
         else
         {
             isAlive = false;
-            Level.setLives((int) (Level.getLives() - this.penalty));
+            ShadowDefend.getInstance().setLives((int) (ShadowDefend.getInstance().getLives() - this.penalty));
 
         }
     }
 
-    public static ArrayList<Slicer> getSlicerList() {
-        return slicerList;
-    }
 
     public static void update() {
         // Every slicer perform the update and remove dead enemies
         // Allows for removing enemies if player defeats them also
-        Iterator<Slicer> it = slicerList.iterator();
+        Iterator<Slicer> it = ShadowDefend.getInstance().getSlicerList().iterator();
         while (it.hasNext()) {
             Slicer slicer = it.next();
             slicer.update(ShadowDefend.getTimeScale());
@@ -115,26 +115,26 @@ public abstract class Slicer {
         }
     }
 
-    protected void setHealth(double health) {
-        this.health = health;
-    }
-
-    protected void setPenalty(double penalty)
-    {
-        this.penalty = penalty;
-    }
-
-
-    protected void setSlicerImg(String imgPath)
-    {
-        this.slicerImg = new Image(imgPath);
-    }
-
-    protected void setSpeed(double speed)
-    {
-        this.speed = speed;
-    }
-
+//    protected void setHealth(double health) {
+//        this.health = health;
+//    }
+//
+//    protected void setPenalty(double penalty)
+//    {
+//        this.penalty = penalty;
+//    }
+//
+//
+//    protected void setSlicerImg(String imgPath)
+//    {
+//        this.slicerImg = new Image(imgPath);
+//    }
+//
+//    protected void setSpeed(double speed)
+//    {
+//        this.speed = speed;
+//    }
+//
 
 
 }

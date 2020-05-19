@@ -1,6 +1,5 @@
 public class WaveEvent {
-    private String waveEvent;
-    private String[] waveEventSplit;
+
     private int waveNumber;
     private String action;
     private int delay;
@@ -14,7 +13,7 @@ public class WaveEvent {
 
     public WaveEvent(String waveEvent)
     {
-        this.waveEventSplit = waveEvent.split(",");
+        String[] waveEventSplit = waveEvent.split(",");
         this.waveNumber = Integer.parseInt(waveEventSplit[0]);
         this.action = waveEventSplit[1];
 
@@ -61,21 +60,21 @@ public class WaveEvent {
     {
         if(this.slicerType.equals("slicer"))
         {
-            Slicer slicer = new RegularSlicer(Level.getCurrentLevel().getStart());
+            new RegularSlicer(ShadowDefend.getInstance().getCurrentLevel().getStart());
         }
 
         if(this.slicerType.equals("superslicer"))
         {
-            Slicer slicer = new SuperSlicer(Level.getCurrentLevel().getStart());
+            new SuperSlicer(ShadowDefend.getInstance().getCurrentLevel().getStart());
         }
 
         if(this.slicerType.equals("megaslicer"))
         {
-            Slicer slicer = new MegaSlicer(Level.getCurrentLevel().getStart());
+            new MegaSlicer(ShadowDefend.getInstance().getCurrentLevel().getStart());
         }
         if(this.slicerType.equals("apexslicer"))
         {
-            Slicer slicer = new ApexSlicer(Level.getCurrentLevel().getStart());
+            new ApexSlicer(ShadowDefend.getInstance().getCurrentLevel().getStart());
         }
         numSpawned++;
 

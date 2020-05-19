@@ -8,18 +8,29 @@ import java.util.Scanner;
 
 public final class WaveManager {
 
-    private static ArrayList<WaveEvent> waveEvents = new ArrayList<>();
-    private static int waveEventIndex = 0;
+    private ArrayList<WaveEvent> waveEvents = new ArrayList<>();
+    private int waveEventIndex = 0;
     private static final String SPAWN = "spawn";
     private static final String DELAY = "delay";
-
     private static final String WAVE_PATH = "res/levels/waves.txt";
-    private static int currentWaveNum = 0;
-    private static boolean endOfWave = true;
+
+    private int currentWaveNum = 0;
+    private boolean endOfWave = true;
 
 
-    // TODO look into making this static with  no constructor
-    public WaveManager() {
+    private static WaveManager _instance = null;
+    // Can only be one waveManger and we want users to access through the instance
+    public static WaveManager getInstance()
+    {
+        if(_instance == null)
+        {
+            return _instance = new WaveManager();
+        }
+        return _instance;
+    }
+
+
+    private WaveManager() {
 
         FileInputStream wavesStream = null;
         try {
@@ -38,19 +49,12 @@ public final class WaveManager {
 
     }
 
-    public WaveEvent getWaveEvent(int index) {
-
-        return waveEvents.get(index);
-    }
     // The current wave event
-    public static WaveEvent getCurrentWaveEvent() {
+    public WaveEvent getCurrentWaveEvent() {
 
         return waveEvents.get(waveEventIndex);
     }
 
-    public static int getWaveEventIndex() {
-        return waveEventIndex;
-    }
     // begins a single wave event
     public void beginWaveEvent()
     {
@@ -87,7 +91,7 @@ public final class WaveManager {
     }
 
 
-    public void updateWaveEvent() {
+    public void updateWaveEvent(double timeScale) {
         // Ensures after all waves are finished we don't try to update
         if(! (waveEventIndex == waveEvents.size() - 1) )
         {
@@ -95,7 +99,7 @@ public final class WaveManager {
             if(wave.getAction().equals(SPAWN))
             {
 
-                if(wave.checkTimer() >= wave.getSpawnDelay()/ShadowDefend.getTimeScale() && wave.getNumSpawned() < wave.getNumToSpawn())
+                if(wave.checkTimer() >= wave.getSpawnDelay()/timeScale && wave.getNumSpawned() < wave.getNumToSpawn())
                 {
                     wave.resetTimer();
                     wave.spawnSlicer();
@@ -111,7 +115,7 @@ public final class WaveManager {
 
             if(wave.getAction().equals(DELAY))
             {
-                if(wave.checkTimer() >= wave.getDelay()/ShadowDefend.getTimeScale())
+                if(wave.checkTimer() >= wave.getDelay()/timeScale)
                 {
                     endWaveEvent();
 
@@ -124,7 +128,7 @@ public final class WaveManager {
 
     }
 
-    // Using this to avoid having to copys of this static
+    // Using this to avoid having to copy's of this static
     public static String getDELAY() {
         return DELAY;
     }
@@ -132,24 +136,16 @@ public final class WaveManager {
     public static String getSPAWN() {
         return SPAWN;
     }
-    public int getNextWaveEventNum()
-    {
-        return waveEvents.get(waveEventIndex + 1).getWaveNumber();
-    }
-    public int getWaveEventNum()
-    {
-        return waveEvents.get(waveEventIndex).getWaveNumber();
-    }
 
-    public static int getCurrentWaveNum() {
+    public int getCurrentWaveNum() {
         return currentWaveNum;
     }
     // begins a wave
     public void beginWave(Input input)
     {
-        if(input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && Slicer.getSlicerList().isEmpty())
+        if(input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && ShadowDefend.getInstance().getSlicerList().isEmpty())
         {
-            Level.setStatus("Wave In Progress");
+            ShadowDefend.getInstance().setStatus("Wave In Progress");
             beginWaveEvent();
         }
 

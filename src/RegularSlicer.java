@@ -1,4 +1,3 @@
-import bagel.DrawOptions;
 import bagel.util.Point;
 
 
@@ -9,11 +8,6 @@ public class RegularSlicer extends Slicer {
 
 
     public RegularSlicer(Point start) {
-        super();
-        setSlicerImg(IMG_PATH);
-        setHealth(HEALTH);
-        setSpeed(SPEED);
-        setPenalty(PENALTY);
-        moveTo(start);
+        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start);
     }
 }
