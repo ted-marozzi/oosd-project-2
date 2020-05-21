@@ -10,7 +10,7 @@ public class SuperTank extends GroundTower {
         super(imgPath, price);
     }
 
-    public static void drawTank(int x, int y)
+    public static void draw(int x, int y)
     {
         tankImg = new Image(imgPath);
         tankImg.draw(x, y);

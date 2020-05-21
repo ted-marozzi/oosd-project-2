@@ -2,9 +2,10 @@ public class WaveEvent {
 
     private int waveNumber;
     private String action;
+    private String slicerType;
     private int delay;
     private int numToSpawn;
-    private String slicerType;
+
     private int spawnDelay;
     private int numSpawned = 0;
 

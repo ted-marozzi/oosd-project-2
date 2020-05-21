@@ -2,7 +2,6 @@
 import bagel.*;
 import bagel.util.Colour;
 
-import java.awt.font.ImageGraphicAttribute;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
@@ -10,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 // Java Imports
 
-
-// TODO ask if list should be static, if not how do I access them out side of Shadow defend, do i pass instance of game or do i make static
 
 public class ShadowDefend extends AbstractGame {
 
@@ -28,6 +25,7 @@ public class ShadowDefend extends AbstractGame {
     private String status = AWAITING;
 
     private int lives = 25;
+
     private int cash = 500;
 
     private int levelIndex = 0;
@@ -42,6 +40,7 @@ public class ShadowDefend extends AbstractGame {
     private static final int INITIAL_TIMESCALE = 1;
     private static double timeScale = INITIAL_TIMESCALE;
 
+    private List<Tower> towerList = new ArrayList<Tower>();
 
 
 
@@ -84,7 +83,13 @@ public class ShadowDefend extends AbstractGame {
             waveManager.updateWaveEvent(timeScale);
         Slicer.update();
         if(waveManager.getEndOfWave() && slicerList.isEmpty())
+        {
             status = AWAITING;
+
+            addCash(150 + 100*waveManager.getCurrentWaveNum());
+            waveManager.setEndOfWave(false);
+        }
+
 
         drawPanels();
 
@@ -100,18 +105,8 @@ public class ShadowDefend extends AbstractGame {
 
     }
 
-    public void addSlicer(Slicer slicer)
-    {
-        slicerList.add(slicer);
-    }
-
-    public static double getTimeScale()
-    {
-        return timeScale;
-    }
-
     // Loads all levels at once
-    public void loadLevels()
+    private void loadLevels()
     {
         levelIndex = 1;
         while(true)
@@ -128,6 +123,97 @@ public class ShadowDefend extends AbstractGame {
         levelIndex = 0;
     }
 
+    // Draws the panels for the game
+    private void drawPanels()
+    {
+        Image statusPanel = new Image(STATUS_PANEL_PATH);
+        Image buyPanel = new Image(BUY_PANEL_PATH);
+        //TODO: remove magic numbers
+        int HEIGHT = ShadowDefend.getHEIGHT(), WIDTH = ShadowDefend.getWIDTH();
+
+        buyPanel.drawFromTopLeft(ORIGIN,ORIGIN);
+        statusPanel.drawFromTopLeft(ORIGIN,HEIGHT - statusPanel.getHeight());
+
+        Font font = new Font(FONT_PATH, 18);
+
+        WaveManager waveManager = WaveManager.getInstance();
+
+        // Dynamically updates content based on the status of the game
+        String waveNum = "Wave: " + waveManager.getCurrentWaveNum();
+        if(waveManager.getCurrentWaveNum() == 0)
+        {
+            waveNum = "Wave: ";
+        }
+
+        font.drawString(waveNum, ORIGIN + 5, HEIGHT - 5);
+
+        String statusStr = "Status: " + status;
+        font.drawString(statusStr, WIDTH/2-font.getWidth(statusStr)/2, HEIGHT - 5);
+
+        DrawOptions drawOptions = new DrawOptions();
+        if(ShadowDefend.getTimeScale() > 1)
+        {
+            drawOptions.setBlendColour(Colour.GREEN);
+        }
+
+        String TimeScaleStr = "Time Scale: " + ShadowDefend.getTimeScale();
+        font.drawString(TimeScaleStr, WIDTH/4-font.getWidth("Time Scale: ")/2, HEIGHT - 5, drawOptions);
+
+        String livesStr = "lives: " + lives;
+        font.drawString(livesStr, WIDTH-2*font.getWidth(livesStr)/2 - 5, HEIGHT - 5, drawOptions);
+
+
+        String keyBinds = "Key binds:\nS - Start Wave\nL - Increase Timescale\nK - Decrease Timescale";
+        font.drawString(keyBinds, (WIDTH-font.getWidth(keyBinds))/2, 25);
+
+        NumberFormat myFormat = NumberFormat.getInstance();
+        myFormat.setGroupingUsed(true);
+
+        String cashStr = "$" + myFormat.format(cash);
+
+
+
+        Tank.draw(64, 35);
+        String tankPrice = "$" + Tank.getPrice();
+        font.drawString(tankPrice, 64-23, 35+50);
+
+        SuperTank.draw(64+120, 35);
+        String superTankPrice = "$" + SuperTank.getPrice();
+        font.drawString(superTankPrice, 64+120 - 23, 35+50);
+
+        AirSupport.draw(64 + 120 + 120, 35);
+        String airSupportPrice = "$" + AirSupport.getPrice();
+        font.drawString(airSupportPrice, 64+120 +120- 23, 35+50);
+
+        font = new Font(FONT_PATH, 60);
+        font.drawString(cashStr, WIDTH-font.getWidth(cashStr) -  50, 65);
+
+
+
+    }
+    public void addCash(int cash) {
+        this.cash = this.cash + cash;
+    }
+    public void minusCash(int cash) {
+        this.cash = this.cash - cash;
+    }
+
+
+    public void addSlicer(Slicer slicer)
+    {
+        slicerList.add(slicer);
+    }
+    public void addTower(Tower tower)
+    {
+        towerList.add(tower);
+    }
+
+    public static double getTimeScale()
+    {
+        return timeScale;
+    }
+
+
     public List<Slicer> getSlicerList() {
         return slicerList;
     }
@@ -140,6 +226,7 @@ public class ShadowDefend extends AbstractGame {
     public static int getHEIGHT() {
         return HEIGHT;
     }
+
     public static int getWIDTH()
     {
         return WIDTH;
@@ -155,70 +242,7 @@ public class ShadowDefend extends AbstractGame {
     }
 
 
-    // Draws the panels for the game
-    public void drawPanels()
-    {
-        Image statusPanel = new Image(STATUS_PANEL_PATH);
-        Image buyPanel = new Image(BUY_PANEL_PATH);
-        //TODO: remove magic numbers
-        int HEIGHT = ShadowDefend.getHEIGHT(), WIDTH = ShadowDefend.getWIDTH();
 
-        buyPanel.drawFromTopLeft(ORIGIN,ORIGIN);
-        statusPanel.drawFromTopLeft(ORIGIN,HEIGHT - 2*statusPanel.getHeight());
-
-        Font font = new Font(FONT_PATH, 18);
-
-        WaveManager waveManager = WaveManager.getInstance();
-
-        // Dynamically updates content based on the status of the game
-        String waveNum = "Wave: " + waveManager.getCurrentWaveNum();
-        if(waveManager.getCurrentWaveNum() == 0)
-        {
-            waveNum = "Wave: ";
-        }
-
-        font.drawString(waveNum, ORIGIN + 5, HEIGHT - 35);
-
-        String statusStr = "Status: " + status;
-        font.drawString(statusStr, WIDTH/2-font.getWidth(statusStr)/2, HEIGHT - 35);
-
-        DrawOptions drawOptions = new DrawOptions();
-        if(ShadowDefend.getTimeScale() > 1)
-        {
-            drawOptions.setBlendColour(Colour.GREEN);
-        }
-
-        String TimeScaleStr = "Time Scale: " + ShadowDefend.getTimeScale();
-        font.drawString(TimeScaleStr, WIDTH/4-font.getWidth("Time Scale: ")/2, HEIGHT - 35, drawOptions);
-
-        String livesStr = "lives: " + lives;
-        font.drawString(livesStr, WIDTH-2*font.getWidth(livesStr)/2 - 5, HEIGHT - 35, drawOptions);
-
-
-        String keyBinds = "Key binds:\nS - Start Wave\nL - Increase Timescale\nK - Decrease Timescale";
-        font.drawString(keyBinds, (WIDTH-font.getWidth(keyBinds))/2, 25);
-
-        NumberFormat myFormat = NumberFormat.getInstance();
-        myFormat.setGroupingUsed(true);
-
-        String cashStr = "$" + myFormat.format(cash);
-
-
-
-        Tank.drawTank(64, 35);
-        String tankPrice = "$" + Tank.getPrice();
-        font.drawString(tankPrice, 64-23, 35+50);
-
-        SuperTank.drawTank(64+120, 35);
-        String superTankPrice = "$" + SuperTank.getPrice();
-        font.drawString(superTankPrice, 64+120 - 23, 35+50);
-
-        font = new Font(FONT_PATH, 60);
-        font.drawString(cashStr, WIDTH-font.getWidth(cashStr) -  50, 65);
-
-
-
-    }
 
     public void setLives(int lives) {
         this.lives = lives;
@@ -228,4 +252,6 @@ public class ShadowDefend extends AbstractGame {
     {
         return lives;
     }
+
+
 }

@@ -12,7 +12,8 @@ import java.util.List;
 public abstract class Slicer {
 
 
-    private double health, speed, reward, penalty;
+    private double  speed;
+    private int reward, health, penalty;
 
 
     private Image slicerImg;
@@ -24,7 +25,7 @@ public abstract class Slicer {
     private boolean isAlive = true;
 
 
-    protected Slicer(String imgPath, double health, double speed, double reward, double penalty, Point start)
+    protected Slicer(String imgPath, int health, double speed, int reward, int penalty, Point start)
     {
         drawOptions = new DrawOptions();
         this.slicerImg = new Image(imgPath);

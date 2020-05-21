@@ -15,7 +15,8 @@ public final class WaveManager {
     private static final String WAVE_PATH = "res/levels/waves.txt";
 
     private int currentWaveNum = 0;
-    private boolean endOfWave = true;
+    private boolean endOfWave = false;
+
 
 
     private static WaveManager _instance = null;
@@ -56,7 +57,7 @@ public final class WaveManager {
     }
 
     // begins a single wave event
-    public void beginWaveEvent()
+    private void beginWaveEvent()
     {
 
         WaveEvent wave = waveEvents.get(waveEventIndex);
@@ -72,7 +73,7 @@ public final class WaveManager {
 
     }
     // Ends a single wave event
-    public void endWaveEvent()
+    private void endWaveEvent()
     {
         WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(false);
@@ -86,6 +87,8 @@ public final class WaveManager {
         else
         {
             endOfWave = true;
+
+
         }
 
     }
@@ -128,18 +131,7 @@ public final class WaveManager {
 
     }
 
-    // Using this to avoid having to copy's of this static
-    public static String getDELAY() {
-        return DELAY;
-    }
 
-    public static String getSPAWN() {
-        return SPAWN;
-    }
-
-    public int getCurrentWaveNum() {
-        return currentWaveNum;
-    }
     // begins a wave
     public void beginWave(Input input)
     {
@@ -156,6 +148,21 @@ public final class WaveManager {
         return endOfWave;
     }
 
+    public void setEndOfWave(boolean endOfWave) {
+        this.endOfWave = endOfWave;
+    }
+    // Using this to avoid having to copy's of this static
+    public static String getDELAY() {
+        return DELAY;
+    }
+
+    public static String getSPAWN() {
+        return SPAWN;
+    }
+
+    public int getCurrentWaveNum() {
+        return currentWaveNum;
+    }
 }
 
 
