@@ -1,30 +1,22 @@
-import bagel.Image;
-import bagel.Input;
+import bagel.util.Point;
 
 public class Tank extends GroundTower {
 
-    private static final String imgPath = "res/images/tank.png";
-    private static int price = 250;
+    private static final String IMG_PATH = "res/images/tank.png";
+    private static final int PRICE = 250;
 
-    public Tank(Input input)
-    {
-        super(imgPath, price);
-
+    public Tank() {
+        super(IMG_PATH, PRICE, new Point(0,0));
     }
 
-    public static void draw(int x, int y)
-    {
-        Image tankImg = new Image(imgPath);
-        tankImg.draw(x, y);
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
-
-    public static int getPrice()
+    public Tank create()
     {
-        return price;
+        return new Tank();
     }
-
-
-
 
 }

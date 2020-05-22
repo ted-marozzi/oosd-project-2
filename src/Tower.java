@@ -1,29 +1,64 @@
 import bagel.Image;
 import bagel.Input;
+import bagel.util.Point;
 
-public class Tower {
 
-    private static Image img;
-    private static int cost;
+public abstract class Tower {
 
-    public Tower(String imgPath, int cost)
+    public boolean isBuying = false;
+    private final Image img;
+    private final int price;
+    private Point pos;
+
+
+
+    protected Tower(String imgPath, int price, Point pos)
     {
         this.img = new Image(imgPath);
-        this.cost = cost;
+        this.price = price;
+        this.pos = pos;
 
-        ShadowDefend.getInstance().addTower(this);
     }
 
-    public void buyTower()
+    public boolean wasClicked(Input input)
     {
-        ShadowDefend.getInstance().minusCash(this.cost);
-
+        return input.getMouseX() >= pos.x - img.getWidth() / 2 && input.getMouseX() <= pos.x + img.getWidth() / 2
+                && input.getMouseY() >= pos.y - img.getWidth() / 2 && input.getMouseY() <= pos.y + img.getWidth() / 2;
     }
 
-    public void drawTowerAtMouse(Input input)
+    public int getPrice() {
+        return price;
+    }
+
+
+    public void setIsBuying(boolean isBuying) {
+        this.isBuying = isBuying;
+    }
+
+    public boolean getIsBuying()
     {
-        this.img.draw(input.getMouseX(), input.getMouseY());
-
+        return isBuying;
     }
 
+    public void setPos(Point pos) {
+        this.pos = pos;
+    }
+
+    public void draw(int x, int y)
+    {
+
+        this.setPos(new Point(x, y));
+        img.draw(x, y);
+    }
+
+    public void draw()
+    {
+
+        img.draw(pos.x, pos.y);
+    }
+
+    public abstract Tower create();
+
+
+    public abstract void update();
 }

@@ -57,25 +57,23 @@ public class WaveEvent {
         this.inProgress = inProgress;
     }
 
-    public void spawnSlicer()
+    public void spawnSlicer(ShadowDefend shadowDefend)
     {
         if(this.slicerType.equals("slicer"))
         {
-            new RegularSlicer(ShadowDefend.getInstance().getCurrentLevel().getStart());
+            new RegularSlicer(shadowDefend.getCurrentLevel().getStart(), shadowDefend);
         }
-
-        if(this.slicerType.equals("superslicer"))
+        else if (this.slicerType.equals("superslicer"))
         {
-            new SuperSlicer(ShadowDefend.getInstance().getCurrentLevel().getStart());
+            new SuperSlicer(shadowDefend.getCurrentLevel().getStart(), shadowDefend);
         }
-
-        if(this.slicerType.equals("megaslicer"))
+        else if(this.slicerType.equals("megaslicer"))
         {
-            new MegaSlicer(ShadowDefend.getInstance().getCurrentLevel().getStart());
+            new MegaSlicer(shadowDefend.getCurrentLevel().getStart(), shadowDefend);
         }
-        if(this.slicerType.equals("apexslicer"))
+        else if(this.slicerType.equals("apexslicer"))
         {
-            new ApexSlicer(ShadowDefend.getInstance().getCurrentLevel().getStart());
+            new ApexSlicer(shadowDefend.getCurrentLevel().getStart(), shadowDefend);
         }
         numSpawned++;
 

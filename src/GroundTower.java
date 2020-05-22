@@ -1,16 +1,15 @@
-import bagel.Image;
-import bagel.Input;
-
-import java.util.ArrayList;
-import java.util.List;
+import bagel.util.Point;
 
 public abstract class GroundTower extends Tower
 {
 
-    protected GroundTower(String imgPath, int price)
+    protected GroundTower(String imgPath, int price, Point pos)
     {
-        super(imgPath, price);
+        super(imgPath, price, pos);
     }
 
+    @Override
+    public void update() {
 
+    }
 }

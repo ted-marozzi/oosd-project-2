@@ -25,7 +25,7 @@ public abstract class Slicer {
     private boolean isAlive = true;
 
 
-    protected Slicer(String imgPath, int health, double speed, int reward, int penalty, Point start)
+    protected Slicer(String imgPath, int health, double speed, int reward, int penalty, Point start, ShadowDefend shadowDefend)
     {
         drawOptions = new DrawOptions();
         this.slicerImg = new Image(imgPath);
@@ -34,7 +34,7 @@ public abstract class Slicer {
         this.penalty = penalty;
         this.reward = reward;
         moveTo(start);
-        ShadowDefend.getInstance().addSlicer(this);
+        shadowDefend.addSlicer(this);
     }
 
 
@@ -72,10 +72,10 @@ public abstract class Slicer {
         return ((polyLines.get(this.pointsReached)).asVector().sub(this.currentPos.asVector())).normalised();
     }
     // Updates an individual enemy dependant on the position
-    public void update(double timeScale)
+    public void update(double timeScale, ShadowDefend shadowDefend)
     {
 
-        List<Point> polyLines = ShadowDefend.getInstance().getCurrentLevel().getPolyLines();
+        List<Point> polyLines = shadowDefend.getCurrentLevel().getPolyLines();
         if(this.pointsReached < polyLines.size()-1)
         {
             Vector2 directionVec = calcDirectionVec(polyLines, timeScale);
@@ -96,19 +96,19 @@ public abstract class Slicer {
         else
         {
             isAlive = false;
-            ShadowDefend.getInstance().setLives((int) (ShadowDefend.getInstance().getLives() - this.penalty));
+            shadowDefend.setLives((int) (shadowDefend.getLives() - this.penalty));
 
         }
     }
 
 
-    public static void update() {
+    public static void update(ShadowDefend shadowDefend) {
         // Every slicer perform the update and remove dead enemies
         // Allows for removing enemies if player defeats them also
-        Iterator<Slicer> it = ShadowDefend.getInstance().getSlicerList().iterator();
+        Iterator<Slicer> it = shadowDefend.getSlicerList().iterator();
         while (it.hasNext()) {
             Slicer slicer = it.next();
-            slicer.update(ShadowDefend.getTimeScale());
+            slicer.update(shadowDefend.getTimeScale(), shadowDefend);
 
             if (!slicer.isAlive) {
                 it.remove();

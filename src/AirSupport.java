@@ -1,21 +1,28 @@
-import bagel.Image;
+import bagel.util.Point;
 
 public class AirSupport extends Tower {
 
     private static final String IMG_PATH = "res/images/airsupport.png";
     private static final int PRICE = 500;
 
-    public AirSupport(String imgPath, int cost) {
-        super(imgPath, cost);
+
+    public AirSupport() {
+        super(IMG_PATH, PRICE, new Point(0,0));
     }
 
-    public static void draw(int x, int y)
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+
+    public AirSupport create()
     {
-        Image airSupportImg = new Image(IMG_PATH);
-        airSupportImg.draw(x, y);
+        return new AirSupport();
     }
 
-    public static int getPrice() {
-        return PRICE;
+    @Override
+    public void update() {
+
     }
 }

@@ -5,7 +5,7 @@ public class MegaSlicer extends Slicer {
     private static final int HEALTH = 2, REWARD = 10, PENALTY = 4;
     private static final double SPEED = 1;
 
-    public MegaSlicer(Point start) {
-        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start);
+    public MegaSlicer(Point start, ShadowDefend shadowDefend) {
+        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start, shadowDefend);
     }
 }

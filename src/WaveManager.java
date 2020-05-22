@@ -1,5 +1,6 @@
 import bagel.Input;
 import bagel.Keys;
+import org.lwjgl.system.CallbackI;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -57,7 +58,7 @@ public final class WaveManager {
     }
 
     // begins a single wave event
-    private void beginWaveEvent()
+    private void beginWaveEvent(ShadowDefend shadowDefend)
     {
 
         WaveEvent wave = waveEvents.get(waveEventIndex);
@@ -67,13 +68,13 @@ public final class WaveManager {
 
         if(wave.getAction().equals(SPAWN))
         {
-            wave.spawnSlicer();
+            wave.spawnSlicer(shadowDefend);
         }
         currentWaveNum++;
 
     }
     // Ends a single wave event
-    private void endWaveEvent()
+    private void endWaveEvent(ShadowDefend shadowDefend)
     {
         WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(false);
@@ -81,7 +82,7 @@ public final class WaveManager {
 
         if(waveEvents.get(waveEventIndex).getWaveNumber() == waveEvents.get(waveEventIndex - 1).getWaveNumber())
         {
-            beginWaveEvent();
+            beginWaveEvent(shadowDefend);
             currentWaveNum--;
         }
         else
@@ -94,7 +95,7 @@ public final class WaveManager {
     }
 
 
-    public void updateWaveEvent(double timeScale) {
+    public void updateWaveEvent(double timeScale, ShadowDefend shadowDefend) {
         // Ensures after all waves are finished we don't try to update
         if(! (waveEventIndex == waveEvents.size() - 1) )
         {
@@ -105,12 +106,12 @@ public final class WaveManager {
                 if(wave.checkTimer() >= wave.getSpawnDelay()/timeScale && wave.getNumSpawned() < wave.getNumToSpawn())
                 {
                     wave.resetTimer();
-                    wave.spawnSlicer();
+                    wave.spawnSlicer(shadowDefend);
                 }
 
                 if(wave.getNumSpawned()  >= wave.getNumToSpawn() )
                 {
-                    endWaveEvent();
+                    endWaveEvent(shadowDefend);
                 }
 
 
@@ -120,7 +121,7 @@ public final class WaveManager {
             {
                 if(wave.checkTimer() >= wave.getDelay()/timeScale)
                 {
-                    endWaveEvent();
+                    endWaveEvent(shadowDefend);
 
                 }
 
@@ -133,12 +134,12 @@ public final class WaveManager {
 
 
     // begins a wave
-    public void beginWave(Input input)
+    public void beginWave(Input input, ShadowDefend shadowDefend)
     {
-        if(input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && ShadowDefend.getInstance().getSlicerList().isEmpty())
+        if(input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && shadowDefend.getSlicerList().isEmpty())
         {
-            ShadowDefend.getInstance().setStatus("Wave In Progress");
-            beginWaveEvent();
+            shadowDefend.setStatus("Wave In Progress");
+            beginWaveEvent(shadowDefend);
         }
 
     }

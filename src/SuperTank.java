@@ -1,25 +1,23 @@
-import bagel.Image;
-import bagel.Input;
+import bagel.util.Point;
+
 
 public class SuperTank extends GroundTower {
-    private static final String imgPath = "res/images/supertank.png";
-    private static Image tankImg;
-    private static int price = 600;
 
-    protected SuperTank(String imgPath) {
-        super(imgPath, price);
-    }
+    private static final String IMG_PATH = "res/images/supertank.png";
+    private static final int PRICE = 600;
 
-    public static void draw(int x, int y)
-    {
-        tankImg = new Image(imgPath);
-        tankImg.draw(x, y);
+    public SuperTank() {
+        super(IMG_PATH, PRICE, new Point(0,0));
     }
 
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 
-    public static int getPrice()
+    public SuperTank create()
     {
-        return price;
+        return new SuperTank();
     }
 }
