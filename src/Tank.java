@@ -1,12 +1,20 @@
 import bagel.util.Point;
 
+import java.util.List;
+
 public class Tank extends GroundTower {
 
     private static final String IMG_PATH = "res/images/tank.png";
     private static final int PRICE = 250;
+    private static final int RANGE = 100;
+    private static final int DAMAGE = 1;
+    private static final int COOLDOWN = 1000;
+    private static final String PROJECTILE_PATH = "res/images/tank_projectile.png";
 
-    public Tank() {
-        super(IMG_PATH, PRICE, new Point(0,0));
+
+
+    public Tank(Point pos) {
+        super(pos, IMG_PATH, PRICE,  RANGE, DAMAGE, COOLDOWN, PROJECTILE_PATH);
     }
 
     @Override
@@ -14,9 +22,13 @@ public class Tank extends GroundTower {
         return super.equals(obj);
     }
 
-    public Tank create()
+    @Override
+    public Tank create(Point pos)
     {
-        return new Tank();
+        return new Tank(pos);
     }
+
+
+
 
 }

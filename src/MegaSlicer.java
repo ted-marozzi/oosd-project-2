@@ -8,4 +8,19 @@ public class MegaSlicer extends Slicer {
     public MegaSlicer(Point start, ShadowDefend shadowDefend) {
         super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start, shadowDefend);
     }
+
+    @Override
+    public void spawn() {
+        Point pos = super.getPos();
+        for(int i = 0; i < 2; i++)
+        {
+
+            Point tmp = new Point(Math.random()-0.5, Math.random()-0.5);
+            pos = pos.asVector().add(tmp.asVector().mul(getSCATTER())).asPoint();
+            Slicer slicer = new SuperSlicer(pos, getShadowDefend());
+            slicer.setPointsReached(getPointsReached());
+
+        }
+
+    }
 }

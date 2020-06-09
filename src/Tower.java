@@ -1,6 +1,9 @@
+import bagel.DrawOptions;
 import bagel.Image;
 import bagel.Input;
 import bagel.util.Point;
+
+import java.util.List;
 
 
 public abstract class Tower {
@@ -9,16 +12,19 @@ public abstract class Tower {
     private final Image img;
     private final int price;
     private Point pos;
+    private DrawOptions drawOptions;
 
 
 
-    protected Tower(String imgPath, int price, Point pos)
+    protected Tower(Point pos, String imgPath, int price)
     {
         this.img = new Image(imgPath);
         this.price = price;
         this.pos = pos;
 
     }
+
+
 
     public boolean wasClicked(Input input)
     {
@@ -40,14 +46,8 @@ public abstract class Tower {
         return isBuying;
     }
 
-    public void setPos(Point pos) {
-        this.pos = pos;
-    }
-
     public void draw(int x, int y)
     {
-
-        this.setPos(new Point(x, y));
         img.draw(x, y);
     }
 
@@ -57,8 +57,22 @@ public abstract class Tower {
         img.draw(pos.x, pos.y);
     }
 
-    public abstract Tower create();
+    public void setPos(Point pos) {
+        this.pos = pos;
+    }
+
+    public Point getPos() {
+        return pos;
+    }
+
+    public void draw(DrawOptions drawOptions)
+    {
+        img.draw(pos.x, pos.y, drawOptions);
+    }
 
 
-    public abstract void update();
+    public abstract Tower create(Point pos);
+
+
+    public abstract void update(List<Slicer> slicerList, ShadowDefend shadowDefend);
 }

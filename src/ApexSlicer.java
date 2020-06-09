@@ -8,4 +8,18 @@ public class ApexSlicer extends Slicer {
     public ApexSlicer(Point start, ShadowDefend shadowDefend) {
         super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start, shadowDefend);
     }
+
+    @Override
+    public void spawn() {
+        for(int i = 0; i < 4; i++)
+        {
+            Point pos = super.getPos();
+            Point tmp = new Point(Math.random()-0.5, Math.random()-0.5);
+            pos = pos.asVector().add(tmp.asVector().mul(getSCATTER())).asPoint();
+            Slicer slicer = new MegaSlicer(pos, getShadowDefend());
+            slicer.setPointsReached(getPointsReached());
+
+        }
+
+    }
 }

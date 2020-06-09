@@ -18,28 +18,14 @@ public final class WaveManager {
     private int currentWaveNum = 0;
     private boolean endOfWave = false;
 
-
-
-    private static WaveManager _instance = null;
-    // Can only be one waveManger and we want users to access through the instance
-    public static WaveManager getInstance()
-    {
-        if(_instance == null)
-        {
-            return _instance = new WaveManager();
-        }
-        return _instance;
-    }
-
-
-    private WaveManager() {
+    public WaveManager() {
 
         FileInputStream wavesStream = null;
         try {
             wavesStream = new FileInputStream(WAVE_PATH);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException io) {
+            io.printStackTrace();
         }
 
         assert wavesStream != null;
@@ -47,13 +33,10 @@ public final class WaveManager {
         while (sc.hasNextLine()) {
             waveEvents.add(new WaveEvent(sc.nextLine()));
         }
-
-
     }
 
     // The current wave event
     public WaveEvent getCurrentWaveEvent() {
-
         return waveEvents.get(waveEventIndex);
     }
 
@@ -76,6 +59,7 @@ public final class WaveManager {
     // Ends a single wave event
     private void endWaveEvent(ShadowDefend shadowDefend)
     {
+
         WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(false);
         waveEventIndex++;
@@ -88,7 +72,6 @@ public final class WaveManager {
         else
         {
             endOfWave = true;
-
 
         }
 
@@ -128,7 +111,27 @@ public final class WaveManager {
             }
 
         }
+        else if(shadowDefend.getSlicerList().isEmpty())
+        {
 
+            shadowDefend.setIsAwaiting(true);
+            shadowDefend.setIsPlacing(false);
+            shadowDefend.setLives(25);
+            shadowDefend.nextLevel();
+            shadowDefend.deleteTowers();
+
+            waveEventIndex = 0;
+            currentWaveNum = 0;
+            endOfWave = false;
+            for( WaveEvent wave: waveEvents)
+            {
+                wave.setNumSpawned(0);
+            }
+            shadowDefend.resetCash();
+
+
+
+        }
 
     }
 
@@ -138,7 +141,7 @@ public final class WaveManager {
     {
         if(input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && shadowDefend.getSlicerList().isEmpty())
         {
-            shadowDefend.setStatus("Wave In Progress");
+            shadowDefend.setIsWaveInProg(true);
             beginWaveEvent(shadowDefend);
         }
 
@@ -163,6 +166,14 @@ public final class WaveManager {
 
     public int getCurrentWaveNum() {
         return currentWaveNum;
+    }
+
+    public ArrayList<WaveEvent> getWaveEvents() {
+        return waveEvents;
+    }
+
+    public int getWaveEventIndex() {
+        return waveEventIndex;
     }
 }
 

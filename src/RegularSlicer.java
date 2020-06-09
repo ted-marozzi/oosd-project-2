@@ -10,4 +10,9 @@ public class RegularSlicer extends Slicer {
     public RegularSlicer(Point start, ShadowDefend shadowDefend) {
         super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start, shadowDefend);
     }
+
+    @Override
+    public void spawn() {
+        return;
+    }
 }

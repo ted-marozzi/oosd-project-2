@@ -37,7 +37,7 @@ public class WaveEvent {
 
     public long checkTimer()
     {
-        return stopWatch.stop();
+        return stopWatch.lap();
     }
 
     public int getWaveNumber() {
@@ -101,5 +101,9 @@ public class WaveEvent {
 
     public int getNumSpawned() {
         return numSpawned;
+    }
+    public void setNumSpawned(int numSpawned)
+    {
+        this.numSpawned = numSpawned;
     }
 }

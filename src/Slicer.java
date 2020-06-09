@@ -11,18 +11,21 @@ import java.util.List;
 //      I will make a new slicer class that extends a base enemy class
 public abstract class Slicer {
 
-
     private double  speed;
     private int reward, health, penalty;
 
 
     private Image slicerImg;
-    private Point currentPos;
+    private Point pos;
     private int pointsReached = 0;
 
 
     private final DrawOptions drawOptions;
     private boolean isAlive = true;
+    private static ShadowDefend SHADOW_DEFEND;
+    private static final int SCATTER = 10;
+    private Vector2 directionVec;
+
 
 
     protected Slicer(String imgPath, int health, double speed, int reward, int penalty, Point start, ShadowDefend shadowDefend)
@@ -35,71 +38,102 @@ public abstract class Slicer {
         this.reward = reward;
         moveTo(start);
         shadowDefend.addSlicer(this);
+        this.SHADOW_DEFEND = shadowDefend;
     }
+
+    public static ShadowDefend getShadowDefend() {
+        return SHADOW_DEFEND;
+    }
+
 
 
 
     // Moves player to PlayerPoint, with draw options setting rotation
     // Moves player when given a rotation argument
     public void moveTo(Point playerPoint, DrawOptions drawOptions) {
-        this.currentPos = playerPoint;
-        slicerImg.draw(currentPos.x, currentPos.y, drawOptions);
+        this.pos = playerPoint;
+        slicerImg.draw(pos.x, pos.y, drawOptions);
 
     }
 
     // Moves player to given point when no rotation is applied
     public void moveTo(Point playerPoint) {
-        this.currentPos = playerPoint;
-        slicerImg.draw(currentPos.x, currentPos.y);
+        this.pos = playerPoint;
+        slicerImg.draw(pos.x, pos.y);
 
     }
+
+    public void dealDamage(int damage)
+    {
+        this.health = health - damage;
+        if(health <= 0)
+        {
+            this.spawn();
+            isAlive = false;
+            SHADOW_DEFEND.addCash(this.reward);
+        }
+    }
+
 
     // Adds the unit vector direction to current point
     private Point calcNextPos(Vector2 direction, double timeScale)
     {
-        return this.currentPos.asVector().add(direction.mul(speed*timeScale)).asPoint();
+        return this.pos.asVector().add(direction.mul(speed*timeScale)).asPoint();
     }
 
     // Calculates the unit direction vector
-    private Vector2 calcDirectionVec(List<Point> polyLines, double timeScale)
+    private Vector2 calcPolyDirectionVec(List<Point> polyLines, double timeScale)
     {
-
-        if(this.currentPos.distanceTo(polyLines.get(this.pointsReached)) < timeScale *speed/2)
+        int nextPoint;
+        if(this.pos.distanceTo(polyLines.get(this.pointsReached)) < timeScale *speed/2 )
         {
             // Increase the points reached by the player by 1
             this.pointsReached = this.pointsReached+1;
         }
-        return ((polyLines.get(this.pointsReached)).asVector().sub(this.currentPos.asVector())).normalised();
+        if(pointsReached == polyLines.size())
+        {
+            nextPoint = pointsReached - 1;
+        }
+        else
+        {
+            nextPoint = pointsReached;
+        }
+        return ((polyLines.get(nextPoint)).asVector().sub(this.pos.asVector())).normalised();
     }
     // Updates an individual enemy dependant on the position
     public void update(double timeScale, ShadowDefend shadowDefend)
     {
-
         List<Point> polyLines = shadowDefend.getCurrentLevel().getPolyLines();
-        if(this.pointsReached < polyLines.size()-1)
-        {
-            Vector2 directionVec = calcDirectionVec(polyLines, timeScale);
 
-            Point nextPos = calcNextPos(directionVec, timeScale);
-
-            // Calc rotation
-            double rotation = Math.atan(directionVec.y/directionVec.x);
-            // As atan only guaranteed to work for positive x
-            if(directionVec.asPoint().x < 0)
-                rotation = rotation-Math.PI;
-
-            this.drawOptions.setRotation(rotation);
-            // Move enemy
-            this.moveTo(nextPos, this.drawOptions);
+        if(this.pointsReached < polyLines.size()) {
+            directionVec = calcPolyDirectionVec(polyLines, timeScale);
+            move(directionVec, timeScale);
 
         }
         else
         {
             isAlive = false;
-            shadowDefend.setLives((int) (shadowDefend.getLives() - this.penalty));
+            shadowDefend.setLives(shadowDefend.getLives() - this.penalty);
 
         }
     }
+
+    private void move(Vector2 directionVec, double timeScale)
+    {
+        Point nextPos = calcNextPos(directionVec, timeScale);
+
+        // Calc rotation
+        double rotation = Math.atan(directionVec.y/directionVec.x);
+        // As atan only guaranteed to work for positive x
+        if(directionVec.asPoint().x < 0)
+            rotation = rotation-Math.PI;
+
+        this.drawOptions.setRotation(rotation);
+        // Move enemy
+        this.moveTo(nextPos, this.drawOptions);
+
+    }
+
 
 
     public static void update(ShadowDefend shadowDefend) {
@@ -108,7 +142,7 @@ public abstract class Slicer {
         Iterator<Slicer> it = shadowDefend.getSlicerList().iterator();
         while (it.hasNext()) {
             Slicer slicer = it.next();
-            slicer.update(shadowDefend.getTimeScale(), shadowDefend);
+            slicer.update(ShadowDefend.getTimeScale(), shadowDefend);
 
             if (!slicer.isAlive) {
                 it.remove();
@@ -116,26 +150,25 @@ public abstract class Slicer {
         }
     }
 
-//    protected void setHealth(double health) {
-//        this.health = health;
-//    }
-//
-//    protected void setPenalty(double penalty)
-//    {
-//        this.penalty = penalty;
-//    }
-//
-//
-//    protected void setSlicerImg(String imgPath)
-//    {
-//        this.slicerImg = new Image(imgPath);
-//    }
-//
-//    protected void setSpeed(double speed)
-//    {
-//        this.speed = speed;
-//    }
-//
+    public Point getPos() {
+        return pos;
+    }
 
+    public Image getSlicerImg() {
+        return slicerImg;
+    }
 
+    public abstract void spawn();
+
+    public int getPointsReached() {
+        return pointsReached;
+    }
+
+    public static int getSCATTER() {
+        return SCATTER;
+    }
+
+    public void setPointsReached(int pointsReached) {
+        this.pointsReached = pointsReached;
+    }
 }

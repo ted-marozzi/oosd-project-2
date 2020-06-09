@@ -5,9 +5,13 @@ public class SuperTank extends GroundTower {
 
     private static final String IMG_PATH = "res/images/supertank.png";
     private static final int PRICE = 600;
+    private static final int RANGE = 150;
+    private static final int DAMAGE = 3;
+    private static final int COOLDOWN = 500;
+    private static final String PROJECTILE_PATH = "res/images/supertank_projectile.png";
 
-    public SuperTank() {
-        super(IMG_PATH, PRICE, new Point(0,0));
+    public SuperTank(Point pos) {
+        super(pos, IMG_PATH, PRICE, RANGE, DAMAGE, COOLDOWN, PROJECTILE_PATH);
     }
 
 
@@ -16,8 +20,12 @@ public class SuperTank extends GroundTower {
         return super.equals(obj);
     }
 
-    public SuperTank create()
+    @Override
+    public SuperTank create(Point pos)
     {
-        return new SuperTank();
+        return new SuperTank(pos);
     }
+
+
+
 }

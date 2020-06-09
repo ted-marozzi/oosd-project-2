@@ -1,5 +1,5 @@
 public class StopWatch {
-
+    //TODO : FIX WRONG UASGE OF THIS CLASS
     private long start;
     private static final long MS = 1000000;
 
@@ -8,9 +8,15 @@ public class StopWatch {
         start = System.nanoTime();
     }
 
-    public long stop()
+    public long lap()
     {
         return (System.nanoTime() - start)/MS;
+    }
+    public long stop()
+    {
+        long time = (System.nanoTime() - start)/MS;
+        reset();
+        return time;
     }
 
     public void reset()
