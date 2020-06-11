@@ -116,8 +116,9 @@ public final class WaveManager {
 
             shadowDefend.setIsAwaiting(true);
             shadowDefend.setIsPlacing(false);
+            shadowDefend.setIsWaveInProg(false);
             shadowDefend.setLives(25);
-            shadowDefend.nextLevel();
+            shadowDefend.nextLevel(shadowDefend.getUserInput());
             shadowDefend.deleteTowers();
 
             waveEventIndex = 0;
@@ -128,6 +129,7 @@ public final class WaveManager {
                 wave.setNumSpawned(0);
             }
             shadowDefend.resetCash();
+
 
 
 

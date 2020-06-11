@@ -1,5 +1,4 @@
 import bagel.DrawOptions;
-import bagel.Keys;
 import bagel.util.Point;
 
 import java.util.ArrayList;
@@ -42,8 +41,6 @@ public class AirSupport extends Tower {
     public void update(List<Slicer> slicerList, ShadowDefend shadowDefend)
     {
 
-
-
         if(!placed)
         {
             stopWatch = new StopWatch();
@@ -82,7 +79,7 @@ public class AirSupport extends Tower {
 
         draw(rotation);
 
-        if(stopWatch.lap() >= dropTime)
+        if(stopWatch.lap() >= dropTime/ShadowDefend.getTimeScale() && shadowDefend.inPlay(this.getPos(), START_OFFSET))
         {
             // drop
             stopWatch.reset();
@@ -100,6 +97,12 @@ public class AirSupport extends Tower {
     {
         return (Math.random() + 1)*1000;
     }
+
+    public boolean isBombsEmpty()
+    {
+        return bombs.size() == 0;
+    }
+
 
 }
 

@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static bagel.Window.close;
 // Java Imports
 
 
@@ -24,13 +26,16 @@ public class ShadowDefend extends AbstractGame {
     private static final int LARGE_FONT = 60;
     private static final int PADDING = 5;
     private static final int MAX_TIMESCALE = 5;
+    private static final int TIMEOUT = 5000;
+    private static int frameCount = 0;
 
     private static final int TANK_X = 64;
     private static final int SUPER_TANK_X = TANK_X + 120;
     private static final int AIR_SUPPORT_X = SUPER_TANK_X + 120;
 
     private static final int TOWER_Y = 40;
-
+    private static final String LOSER = "You lost!";
+    private static final String CLOSE_WINDOW = "Press any key to close the window.";
     private static final String BUY_PANEL_PATH = "res/images/buypanel.png";
     private static final String STATUS_PANEL_PATH = "res/images/statuspanel.png";
     private static final String FONT_PATH = "res/fonts/DejaVuSans-Bold.ttf";
@@ -82,6 +87,7 @@ public class ShadowDefend extends AbstractGame {
 
     private final WaveManager waveManager;
     private String status;
+    private static Image statusPanel, buyPanel;
 
 
     // Constructor
@@ -97,6 +103,9 @@ public class ShadowDefend extends AbstractGame {
         uniqueTowers.add(tank);
         uniqueTowers.add(superTank);
         uniqueTowers.add(airSupport);
+
+        statusPanel = new Image(STATUS_PANEL_PATH);
+        buyPanel = new Image(BUY_PANEL_PATH);
     }
 
     /**
@@ -113,51 +122,124 @@ public class ShadowDefend extends AbstractGame {
         calcTimeScale(input);
         setStatus();
         userInput = input;
-
-
-
-        // Draws the current level
-
         levelsList.get(levelIndex).draw();
 
-        checkBought(input);
-
-        for(Tower tower: towerList)
-        {
-            tower.update(slicerList, shadowDefend);
-        }
-
-        waveManager.beginWave(input, shadowDefend);
-
-        Slicer.update(shadowDefend);
-
-        if(waveManager.getCurrentWaveEvent().getInProgress())
-        {// TODO: remove magic nums and strings
-            isWaveInProg = true;
-            waveManager.updateWaveEvent(timeScale, shadowDefend);
-        }
-
-
-
-
-        shadowDefend.getProjectileList().removeIf(projectile -> !projectile.update(timeScale, this));
-
-        if(waveManager.getEndOfWave() && slicerList.isEmpty() && !(waveManager.getWaveEventIndex() == waveManager.getWaveEvents().size() - 1) )
+        if(lives <= 0)
         {
 
-            isWaveInProg = false;
-            isAwaiting = true;
+            Font font = new Font(FONT_PATH, LARGE_FONT);
+            font.drawString(LOSER, WIDTH / 2 - font.getWidth(WINNER) / 2, HEIGHT / 2);
 
-            addCash(150 + 100*waveManager.getCurrentWaveNum());
-            waveManager.setEndOfWave(false);
+            font = new Font(FONT_PATH, SMALL_FONT);
+            font.drawString(CLOSE_WINDOW, WIDTH / 2 - font.getWidth(CLOSE_WINDOW) / 2, HEIGHT / 2 + LARGE_FONT);
+
+            if (input.wasPressed(MouseButtons.LEFT)) {
+
+                close();
+            }
+
+
+        }
+        else {
+
+
+            // Draws the current level
+
+
+
+            checkBought(input);
+
+            for (Tower tower : towerList) {
+                tower.update(slicerList, shadowDefend);
+
+            }
+
+            towerList.removeIf(tower -> {
+                if (isAirsupport(tower)) {
+                    AirSupport _airSupport = (AirSupport) tower;
+                    return _airSupport.isBombsEmpty() && !inPlay(tower.getPos(), 11);
+                }
+                return false;
+            });
+
+
+
+            waveManager.beginWave(input, shadowDefend);
+
+            Slicer.update(shadowDefend);
+            shadowDefend.getProjectileList().removeIf(projectile -> !projectile.update(timeScale, this));
+
+            if (waveManager.getCurrentWaveEvent().getInProgress()) {// TODO: remove magic nums and strings
+                isWaveInProg = true;
+                waveManager.updateWaveEvent(timeScale, shadowDefend);
+            }
+
+
+            if (waveManager.getEndOfWave() && slicerList.isEmpty() && !(waveManager.getWaveEventIndex() == waveManager.getWaveEvents().size() - 1)) {
+
+                isWaveInProg = false;
+                isAwaiting = true;
+
+                addCash(150 + 100 * waveManager.getCurrentWaveNum());
+                waveManager.setEndOfWave(false);
+            }
+
+
+            drawPanels();
+// TODO check this
+            if (isWinner) {
+                Font font = new Font(FONT_PATH, LARGE_FONT);
+                font.drawString(WINNER, WIDTH / 2 - font.getWidth(WINNER) / 2, HEIGHT / 2);
+                font = new Font(FONT_PATH, SMALL_FONT);
+                font.drawString(CLOSE_WINDOW, WIDTH / 2 - font.getWidth(CLOSE_WINDOW) / 2, HEIGHT / 2 + LARGE_FONT);
+
+            }
+
+            if (input.wasPressed(MouseButtons.LEFT) && isWinner) {
+
+                close();
+            }
         }
 
-
-        drawPanels();
+    }
+    private boolean isAirsupport(Tower tower)
+    {
+        return tower instanceof AirSupport;
 
     }
 
+    public boolean inPlay(Point pos)
+    {
 
+        if(pos.x < ORIGIN || pos.y < ORIGIN || pos.x > WIDTH || pos.y > HEIGHT)
+        {
+            return false;
+        }
+        return true;
+    }
+    public boolean inPlay(Point pos, int offset)
+    {
+
+        if(pos.x < ORIGIN - offset || pos.y < ORIGIN - offset || pos.x > WIDTH + offset || pos.y > HEIGHT + offset)
+        {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static void setIsWinner(boolean isWinner) {
+        ShadowDefend.isWinner = isWinner;
+    }
+
+    public int getLevelIndex()
+    {
+        return levelIndex;
+    }
+
+    public int getLevelsListSize() {
+        return levelsList.size();
+    }
 
     private void checkBought(Input input)
     {
@@ -168,7 +250,7 @@ public class ShadowDefend extends AbstractGame {
             {
                 if(tower.wasClicked(input) && cash >= tower.getPrice())
                 {
-                    minusCash(tower.getPrice());
+
                     tower.setIsBuying(true);
                     isPlacing = true;
                     break;
@@ -180,23 +262,35 @@ public class ShadowDefend extends AbstractGame {
         {
             isPlacing = true;
 
-            for(Tower tower: uniqueTowers)
+            if(input.wasPressed(MouseButtons.RIGHT))
             {
-                if(tower.getIsBuying())
-                {
-                    tower.draw((int)input.getMouseX(), (int)input.getMouseY());
-                }
-            }
-
-            if(input.wasPressed(MouseButtons.LEFT) &&
-                    !levelsList.get(levelIndex).getMap().getPropertyBoolean((int)input.getMouseX(),
-                            (int)input.getMouseY(), "blocked", false))
-            {
+                isPlacing = false;
                 for(Tower tower: uniqueTowers)
                 {
                     if(tower.getIsBuying())
                     {
+                        tower.setIsBuying(false);
 
+
+                    }
+
+                }
+
+
+            }
+
+            for(Tower tower: uniqueTowers)
+            {
+                if(isPlaceable(tower, input))
+                {
+                    tower.draw((int)input.getMouseX(), (int)input.getMouseY());
+                }
+
+                if(isPlaceable(tower, input) && input.wasPressed(MouseButtons.LEFT))
+                {
+                    if(tower.getIsBuying())
+                    {
+                        minusCash(tower.getPrice());
                         isPlacing = false;
                         tower.setIsBuying(false);
                         Tower _tower =  tower.create(new Point(input.getMouseX(),input.getMouseY()));
@@ -204,12 +298,44 @@ public class ShadowDefend extends AbstractGame {
                         tower.draw();
 
                     }
+
                 }
 
+
             }
+
         }
 
     }
+
+    private boolean isPlaceable(Tower tower, Input input)
+    {
+        if(input.getMouseX() <= ORIGIN || input.getMouseX() >= WIDTH || input.getMouseY() <= ORIGIN || input.getMouseY() >= HEIGHT)
+        {
+            return false;
+        }
+        return tower.getIsBuying() &&
+                !levelsList.get(levelIndex).getMap().getPropertyBoolean((int)input.getMouseX(), (int)input.getMouseY(), "blocked", false)
+                && !interectsTowers(input) && !statusPanel.getBoundingBoxAt(new Point(WIDTH/2, HEIGHT- statusPanel.getHeight()/2)).intersects(input.getMousePosition())
+                && !buyPanel.getBoundingBoxAt(new Point(WIDTH/2,ORIGIN + buyPanel.getHeight()/2)).intersects(input.getMousePosition());
+    }
+
+    private boolean interectsTowers(Input input)
+    {
+
+        for(Tower tower: towerList)
+        {
+            //if(input.getMouseX() >= tower.getBoundingBox().left() && input.getMouseX() <= tower.getBoundingBox().right()
+                //&& input.getMouseY() >= tower.getBoundingBox().top() && input.getMouseY() <= tower.getBoundingBox().bottom())
+            if(tower.getBoundingBox().intersects(input.getMousePosition()))
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
 
     public void deleteTowers()
     {
@@ -252,18 +378,12 @@ public class ShadowDefend extends AbstractGame {
     private void drawPanels()
     {
 
-
-        Image statusPanel = new Image(STATUS_PANEL_PATH);
-        Image buyPanel = new Image(BUY_PANEL_PATH);
-
-
         buyPanel.drawFromTopLeft(ORIGIN,ORIGIN);
 
 
         Font font = new Font(FONT_PATH, SMALL_FONT);
 
         drawStatusPanel(font, statusPanel, waveManager);
-
 
         drawTowers(font);
 
@@ -319,18 +439,40 @@ public class ShadowDefend extends AbstractGame {
         int priceVerOffset = 50;
         int priceHorOffset = 23;
 
+
+        DrawOptions drawOptions;
+        drawOptions = setColour(tank);
+
         tank.draw();
         String tankPrice = "$" + tank.getPrice();
-        font.drawString(tankPrice, TANK_X-priceHorOffset, TOWER_Y+priceVerOffset);
+        font.drawString(tankPrice, TANK_X-priceHorOffset, TOWER_Y+priceVerOffset, drawOptions);
 
+        drawOptions = setColour(superTank);
         superTank.draw();
         String superTankPrice = "$" + superTank.getPrice();
-        font.drawString(superTankPrice, SUPER_TANK_X - priceHorOffset, TOWER_Y + priceVerOffset);
+        font.drawString(superTankPrice, SUPER_TANK_X - priceHorOffset, TOWER_Y + priceVerOffset, drawOptions);
 
+        drawOptions = setColour(airSupport);
         airSupport.draw(AIR_SUPPORT_X, TOWER_Y);
         String airSupportPrice = "$" + airSupport.getPrice();
-        font.drawString(airSupportPrice, AIR_SUPPORT_X - priceHorOffset, TOWER_Y + priceVerOffset);
+        font.drawString(airSupportPrice, AIR_SUPPORT_X - priceHorOffset, TOWER_Y + priceVerOffset, drawOptions);
 
+    }
+
+    private DrawOptions setColour(Tower tower)
+    {
+        DrawOptions drawOptions =  new DrawOptions();
+
+        if(tower.getPrice() <= cash)
+        {
+            drawOptions.setBlendColour(Colour.GREEN);
+        }
+        else
+        {
+            drawOptions.setBlendColour(Colour.RED);
+        }
+
+        return drawOptions;
     }
 
     public void addCash(int cash) {
@@ -413,7 +555,8 @@ public class ShadowDefend extends AbstractGame {
     public List<Projectile> getProjectileList() {
         return projectileList;
     }
-    public void nextLevel()
+
+    public void nextLevel(Input input)
     {
 
 
@@ -424,7 +567,11 @@ public class ShadowDefend extends AbstractGame {
         else
         {
             // Cover the screen
-            System.out.println("WINNER!");
+
+            setIsWinner(true);
+
+
+
             // TODO: any key to exit
         }
     }

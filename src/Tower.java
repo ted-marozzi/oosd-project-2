@@ -2,6 +2,7 @@ import bagel.DrawOptions;
 import bagel.Image;
 import bagel.Input;
 import bagel.util.Point;
+import bagel.util.Rectangle;
 
 import java.util.List;
 
@@ -16,12 +17,21 @@ public abstract class Tower {
 
 
 
-    protected Tower(Point pos, String imgPath, int price)
-    {
+    protected Tower(Point pos, String imgPath, int price) {
         this.img = new Image(imgPath);
-        this.price = price;
         this.pos = pos;
 
+
+        this.price = price;
+
+
+
+    }
+
+    public Rectangle getBoundingBox()
+    {
+
+        return img.getBoundingBoxAt(pos);
     }
 
 
@@ -75,4 +85,7 @@ public abstract class Tower {
 
 
     public abstract void update(List<Slicer> slicerList, ShadowDefend shadowDefend);
+
+
+
 }
