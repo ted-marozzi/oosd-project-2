@@ -18,13 +18,13 @@ public class WaveEvent {
         this.waveNumber = Integer.parseInt(waveEventSplit[0]);
         this.action = waveEventSplit[1];
 
-        if(action.equals(WaveManager.getSPAWN()))
+        if(action.equals(ShadowDefend.getSPAWN()))
         {
             this.numToSpawn = Integer.parseInt(waveEventSplit[2]);
             this.slicerType = waveEventSplit[3];
             this.spawnDelay = Integer.parseInt(waveEventSplit[4]);
         }
-        else if(action.equals(WaveManager.getDELAY()))
+        else if(action.equals(ShadowDefend.getDELAY()))
         {
             this.delay = Integer.parseInt(waveEventSplit[2]);
         }
