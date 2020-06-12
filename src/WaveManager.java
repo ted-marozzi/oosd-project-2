@@ -15,7 +15,7 @@ public final class WaveManager {
     private static final String DELAY = "delay";
     private static final String WAVE_PATH = "res/levels/waves.txt";
 
-    private int currentWaveNum = 0;
+    private int currentWaveNum = 1;
     private boolean endOfWave = false;
 
     public WaveManager() {
@@ -35,42 +35,42 @@ public final class WaveManager {
         }
     }
 
+    public void nextWave()
+    {
+        this.currentWaveNum++;
+    }
+
     // The current wave event
     public WaveEvent getCurrentWaveEvent() {
         return waveEvents.get(waveEventIndex);
     }
 
     // begins a single wave event
-    private void beginWaveEvent(ShadowDefend shadowDefend)
-    {
+    private void beginWaveEvent(ShadowDefend shadowDefend) {
 
         WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(true);
         wave.startTimer();
-        endOfWave = true;
 
-        if(wave.getAction().equals(SPAWN))
-        {
+
+        if (wave.getAction().equals(SPAWN)) {
             wave.spawnSlicer(shadowDefend);
         }
-        currentWaveNum++;
+
 
     }
+
     // Ends a single wave event
-    private void endWaveEvent(ShadowDefend shadowDefend)
-    {
+    private void endWaveEvent(ShadowDefend shadowDefend) {
 
         WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(false);
         waveEventIndex++;
 
-        if(waveEvents.get(waveEventIndex).getWaveNumber() == waveEvents.get(waveEventIndex - 1).getWaveNumber())
-        {
+        if (waveEvents.get(waveEventIndex).getWaveNumber() == waveEvents.get(waveEventIndex - 1).getWaveNumber()) {
             beginWaveEvent(shadowDefend);
-            currentWaveNum--;
-        }
-        else
-        {
+
+        } else {
             endOfWave = true;
 
         }
@@ -80,83 +80,68 @@ public final class WaveManager {
 
     public void updateWaveEvent(double timeScale, ShadowDefend shadowDefend) {
         // Ensures after all waves are finished we don't try to update
-        if(! (waveEventIndex == waveEvents.size() - 1) )
-        {
+        if (!(waveEventIndex == waveEvents.size() - 1)) {
             WaveEvent wave = waveEvents.get(waveEventIndex);
-            if(wave.getAction().equals(SPAWN))
-            {
+            if (wave.getAction().equals(SPAWN)) {
 
-                if(wave.checkTimer() >= wave.getSpawnDelay()/timeScale && wave.getNumSpawned() < wave.getNumToSpawn())
-                {
+                if (wave.checkTimer() >= wave.getSpawnDelay() / timeScale && wave.getNumSpawned() < wave.getNumToSpawn()) {
                     wave.resetTimer();
                     wave.spawnSlicer(shadowDefend);
                 }
 
-                if(wave.getNumSpawned()  >= wave.getNumToSpawn() )
-                {
+                if (wave.getNumSpawned() >= wave.getNumToSpawn()) {
                     endWaveEvent(shadowDefend);
                 }
 
 
             }
 
-            if(wave.getAction().equals(DELAY))
-            {
-                if(wave.checkTimer() >= wave.getDelay()/timeScale)
-                {
+            if (wave.getAction().equals(DELAY)) {
+                if (wave.checkTimer() >= wave.getDelay() / timeScale) {
                     endWaveEvent(shadowDefend);
 
                 }
 
             }
 
-        }
-        else if(shadowDefend.getSlicerList().isEmpty())
-        {
-
-            shadowDefend.setIsAwaiting(true);
-            shadowDefend.setIsPlacing(false);
-            shadowDefend.setIsWaveInProg(false);
-            shadowDefend.setLives(25);
-            shadowDefend.nextLevel(shadowDefend.getUserInput());
-            shadowDefend.deleteTowers();
+        } else if (shadowDefend.getSlicerList().isEmpty()) {
 
             waveEventIndex = 0;
-            currentWaveNum = 0;
+            currentWaveNum = 1;
             endOfWave = false;
+
+
+            shadowDefend.setLevelComplete(true);
             for( WaveEvent wave: waveEvents)
             {
                 wave.setNumSpawned(0);
             }
-            shadowDefend.resetCash();
-
-
-
 
         }
 
     }
 
+    public void setWaveEventIndex(int waveEventIndex) {
+        this.waveEventIndex = waveEventIndex;
+    }
 
     // begins a wave
-    public void beginWave(Input input, ShadowDefend shadowDefend)
-    {
-        if(input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && shadowDefend.getSlicerList().isEmpty())
-        {
+    public void beginWave(Input input, ShadowDefend shadowDefend) {
+        if (input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && shadowDefend.getSlicerList().isEmpty()) {
             shadowDefend.setIsWaveInProg(true);
             beginWaveEvent(shadowDefend);
         }
 
     }
 
-    public boolean getEndOfWave()
-    {
+    public boolean getEndOfWave() {
         return endOfWave;
     }
 
     public void setEndOfWave(boolean endOfWave) {
         this.endOfWave = endOfWave;
     }
+
     // Using this to avoid having to copy's of this static
     public static String getDELAY() {
         return DELAY;
