@@ -15,10 +15,9 @@ import static bagel.Window.close;
 
 
 public class ShadowDefend extends AbstractGame {
-
-    // TODO: unsinglton, check all modifers, and java doc
     //TODO: limit =time scale
 
+    // int Constants
     private static final int WIDTH = 1024;
     private static final int INITIAL_LIVES = 25;
     private static final int HEIGHT = 768;
@@ -27,14 +26,15 @@ public class ShadowDefend extends AbstractGame {
     private static final int LARGE_FONT = 60;
     private static final int PADDING = 5;
     private static final int MAX_TIMESCALE = 5;
-    private static final int TIMEOUT = 5000;
-    private static int frameCount = 0;
-
     private static final int TANK_X = 64;
     private static final int SUPER_TANK_X = TANK_X + 120;
     private static final int AIR_SUPPORT_X = SUPER_TANK_X + 120;
-
     private static final int TOWER_Y = 40;
+    private static final int INITAL_CASH = 500;
+    private static final int INITIAL_TIMESCALE = 1;
+
+    // String Constants
+    private static final String GAME_NAME = "ShadowDefend";
     private static final String LOSER = "You lost!";
     private static final String LEVEL_PASSSED = "You have completed the level!";
     private static final String CONTINUE = "Click to continue.";
@@ -46,53 +46,48 @@ public class ShadowDefend extends AbstractGame {
     private static final String PLACING = "Placing";
     private static final String WAVE_IN_PROG = "Wave In Progress";
     private static final String AWAITING = "Awaiting Start";
-    private static final int INITAL_CASH = 500;
+
+    // ints
+    private int lives = INITIAL_LIVES;
+    private int levelIndex = 0;
     private int cash = INITAL_CASH;
 
+    // doubles
+    private static double timeScale = INITIAL_TIMESCALE;
 
+    // Strings
+    private String status;
+
+    // booleans
     private static boolean isWinner = false;
     private static boolean isPlacing = false;
     private static boolean isWaveInProg = false;
     private static boolean isAwaiting = true;
+    private boolean levelComplete = false;
 
 
-    private int lives = INITIAL_LIVES;
-    private static Input userInput;
-
-
-    private int levelIndex = 0;
+    // lists
     private final List<Level> levelsList = new ArrayList<>();
     private final List<Projectile> projectileList = new ArrayList<>();
-
-
-    // Lists to keep track of how many levels and slicers there are
     private final List<Slicer> slicerList = new ArrayList<>();
-
-
-    // Timing
-    private static final int INITIAL_TIMESCALE = 1;
-    private static double timeScale = INITIAL_TIMESCALE;
-
+    private final ArrayList<Tower> uniqueTowers = new ArrayList<>();
     private final List<Tower> towerList = new ArrayList<>();
 
-
+    // Custom classes
+    private static Input userInput;
     private final Tank tank;
     private final SuperTank superTank;
     private final AirSupport airSupport;
-    private final ArrayList<Tower> uniqueTowers = new ArrayList<>();
-
     private static ShadowDefend shadowDefend;
-
     private final WaveManager waveManager;
-    private String status;
     private static Image statusPanel, buyPanel;
-    private boolean levelComplete = false;
 
 
     // Constructor
     private ShadowDefend() {
-        super(WIDTH, HEIGHT, "ShadowDefend");
+        super(WIDTH, HEIGHT, GAME_NAME);
         loadLevels();
+
         waveManager = new WaveManager();
 
         tank = new Tank(new Point(TANK_X, TOWER_Y));
