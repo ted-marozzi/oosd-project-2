@@ -1,5 +1,6 @@
 public class StopWatch {
 
+    // Timing class to abstract from performing the difference calculation
     private long start;
     private static final long MS = 1000000;
 
@@ -8,15 +9,9 @@ public class StopWatch {
         start = System.nanoTime();
     }
 
-    public long lap()
+    public long lapMS()
     {
         return (System.nanoTime() - start)/MS;
-    }
-    public long stop()
-    {
-        long time = (System.nanoTime() - start)/MS;
-        reset();
-        return time;
     }
 
     public void reset()

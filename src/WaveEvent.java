@@ -1,3 +1,4 @@
+// Class to hold one line in the waves.txt file
 public class WaveEvent {
 
     private int waveNumber;
@@ -12,6 +13,7 @@ public class WaveEvent {
     private boolean inProgress = false;
     private StopWatch stopWatch;
 
+    // Constructor, assigns txt file to variables
     public WaveEvent(String waveEvent)
     {
         String[] waveEventSplit = waveEvent.split(",");
@@ -30,33 +32,7 @@ public class WaveEvent {
         }
     }
 
-    public void startTimer()
-    {
-        stopWatch = new StopWatch();
-    }
-
-    public long checkTimer()
-    {
-        return stopWatch.lap();
-    }
-
-    public int getWaveNumber() {
-        return waveNumber;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public boolean getInProgress()
-    {
-        return inProgress;
-    }
-
-    public void setInProgress(boolean inProgress) {
-        this.inProgress = inProgress;
-    }
-
+    // Spawns the appropriate slicer
     public void spawnSlicer(ShadowDefend shadowDefend)
     {
         if(this.slicerType.equals("slicer"))
@@ -79,6 +55,16 @@ public class WaveEvent {
 
     }
 
+    // Timing
+    public void startTimer()
+    {
+        stopWatch = new StopWatch();
+    }
+
+    public long checkTimer()
+    {
+        return stopWatch.lapMS();
+    }
 
 
     public int getNumToSpawn() {
@@ -102,8 +88,26 @@ public class WaveEvent {
     public int getNumSpawned() {
         return numSpawned;
     }
+
     public void setNumSpawned(int numSpawned)
     {
         this.numSpawned = numSpawned;
+    }
+
+    public int getWaveNumber() {
+        return waveNumber;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public boolean getInProgress()
+    {
+        return inProgress;
+    }
+
+    public void setInProgress(boolean inProgress) {
+        this.inProgress = inProgress;
     }
 }

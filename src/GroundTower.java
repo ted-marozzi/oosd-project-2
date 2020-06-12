@@ -4,15 +4,14 @@ import bagel.util.Vector2;
 
 import java.util.List;
 
+// Both tanks use this
 public abstract class GroundTower extends Tower
 {
-
     private int range, damage, coolDown;
     StopWatch stopWatch;
     Point pos;
     String projectilePath;
     DrawOptions drawOptions;
-
 
     protected GroundTower(Point pos, String imgPath, int price, int range, int damage, int coolDown, String projectilePath)
     {
@@ -27,14 +26,12 @@ public abstract class GroundTower extends Tower
 
     }
 
-
-
+    // Updates the ground towers
     public void update(List<Slicer> slicerList, ShadowDefend shadowDefend) {
-
 
         for(Slicer slicer: slicerList)
         {
-            if(slicer.getPos().distanceTo(this.pos) <= range && this.stopWatch.lap() >= coolDown/shadowDefend.getTimeScale())
+            if(slicer.getPos().distanceTo(this.pos) <= range && this.stopWatch.lapMS() >= coolDown/shadowDefend.getTimeScale())
             {
                 drawOptions.setRotation(calcRotation(slicer));
                 fire(shadowDefend, slicer);
@@ -44,13 +41,12 @@ public abstract class GroundTower extends Tower
         }
         draw(drawOptions);
     }
-
+    // Makes a projectile
     private void fire(ShadowDefend shadowDefend, Slicer slicer)
     {
-
         shadowDefend.getProjectileList().add(new Projectile(pos, projectilePath, damage, slicer));
     }
-
+    // Aims the tank at the slicer
     private double calcRotation(Slicer slicer)
     {
         Vector2 directionVec = slicer.getPos().asVector().sub(this.pos.asVector());

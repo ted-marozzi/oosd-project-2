@@ -1,11 +1,8 @@
 
 import bagel.map.TiledMap;
-
 import bagel.util.Point;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 // Class which holds information specific to a level/map
@@ -25,12 +22,10 @@ public class Level
         start = polyLines.get(0);
     }
 
-
-
+    // Draws the Level
     public void draw() {
         int ORIGIN = ShadowDefend.getORIGIN();
         map.draw(ORIGIN,ORIGIN,ORIGIN,ORIGIN,ShadowDefend.getWIDTH(), ShadowDefend.getHEIGHT());
-
     }
 
     // Loads all levels at once
@@ -48,6 +43,7 @@ public class Level
 
     }
 
+    // Get and set
     public TiledMap getMap() {
         return map;
     }

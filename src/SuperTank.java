@@ -1,6 +1,6 @@
 import bagel.util.Point;
 
-
+// Type of ground tower
 public class SuperTank extends GroundTower {
 
     private static final String IMG_PATH = "res/images/supertank.png";

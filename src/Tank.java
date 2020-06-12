@@ -1,7 +1,5 @@
 import bagel.util.Point;
-
-import java.util.List;
-
+// Regular tank
 public class Tank extends GroundTower {
 
     private static final String IMG_PATH = "res/images/tank.png";
@@ -10,8 +8,6 @@ public class Tank extends GroundTower {
     private static final int DAMAGE = 1;
     private static final int COOLDOWN = 1000;
     private static final String PROJECTILE_PATH = "res/images/tank_projectile.png";
-
-
 
     public Tank(Point pos) {
         super(pos, IMG_PATH, PRICE,  RANGE, DAMAGE, COOLDOWN, PROJECTILE_PATH);
@@ -27,8 +23,5 @@ public class Tank extends GroundTower {
     {
         return new Tank(pos);
     }
-
-
-
 
 }

@@ -1,6 +1,7 @@
 import bagel.Image;
 import bagel.util.Point;
 
+// Shot by tank and super tank
 public class Projectile
 {
     private final int damage;
@@ -8,7 +9,7 @@ public class Projectile
     private Point pos;
     private final Image img;
     private static final int SPEED = 10;
-
+    private static final int EPSILON = 7;
 
     public Projectile(Point pos, String imgPath, int damage, Slicer slicer)
     {
@@ -19,11 +20,12 @@ public class Projectile
         img.draw(pos.x, pos.y);
     }
 
+    // Moves the projectile towards the updated slicer pos
     public boolean update(double timeScale, ShadowDefend shadowDefend)
     {
         pos = pos.asVector().add(slicer.getPos().asVector().sub(this.pos.asVector()).normalised().mul(SPEED*timeScale)).asPoint();
-
-        if(this.pos.distanceTo(slicer.getPos()) < 7*timeScale)
+        // checks if a slicer is hit
+        if(this.pos.distanceTo(slicer.getPos()) < EPSILON*timeScale)
         {
             slicer.dealDamage(this.damage, shadowDefend);
             return false;
@@ -32,9 +34,5 @@ public class Projectile
         img.draw(pos.x, pos.y);
         return true;
     }
-
-
-
-
 
 }

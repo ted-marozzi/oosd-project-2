@@ -2,30 +2,26 @@ import bagel.DrawOptions;
 import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Vector2;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-// Enemy class, if we have multiple classes,
-//      I will make a new slicer class that extends a base enemy class
+// Parent slicer class
 public abstract class Slicer {
 
     private final double speed;
-    private int reward, health, penalty;
-
+    private final int reward;
+    private int health;
+    private final int penalty;
 
     private final Image slicerImg;
     private Point pos;
     private int pointsReached = 0;
 
-
     private final DrawOptions drawOptions;
     private boolean isAlive = true;
     private static final int SCATTER = 10;
-    private Vector2 directionVec;
 
-
+    // Only accessed by slicer objects
     protected Slicer(String imgPath, int health, double speed, int reward, int penalty, Point start) {
         drawOptions = new DrawOptions();
         this.slicerImg = new Image(imgPath);
@@ -52,8 +48,10 @@ public abstract class Slicer {
 
     }
 
+    // Deals damage to slicers
     public void dealDamage(int damage, ShadowDefend shadowDefend) {
         this.health = health - damage;
+        // Slicer is dead
         if (health <= 0) {
             spawn(shadowDefend);
             isAlive = false;
@@ -74,6 +72,7 @@ public abstract class Slicer {
             // Increase the points reached by the player by 1
             this.pointsReached = this.pointsReached + 1;
         }
+        // Ensures that nextPoint is valid
         if (pointsReached == polyLines.size()) {
             nextPoint = pointsReached - 1;
         } else {
@@ -85,18 +84,19 @@ public abstract class Slicer {
     // Updates an individual enemy dependant on the position
     public void update(double timeScale, ShadowDefend shadowDefend) {
         List<Point> polyLines = shadowDefend.getCurrentLevel().getPolyLines();
-
+        // Moves the slicer
         if (this.pointsReached < polyLines.size()) {
-            directionVec = calcPolyDirectionVec(polyLines, timeScale);
+            Vector2 directionVec = calcPolyDirectionVec(polyLines, timeScale);
             move(directionVec, timeScale);
 
         } else {
+            // When slicer is off the screen
             isAlive = false;
             shadowDefend.setLives(shadowDefend.getLives() - this.penalty);
-
         }
     }
 
+    // Moves the slicer
     private void move(Vector2 directionVec, double timeScale) {
         Point nextPos = calcNextPos(directionVec, timeScale);
 
@@ -112,7 +112,7 @@ public abstract class Slicer {
 
     }
 
-
+    // Updates all the slicers hence static
     public static void update(ShadowDefend shadowDefend) {
         // Every slicer perform the update and remove dead enemies
         // Allows for removing enemies if player defeats them also
@@ -130,7 +130,6 @@ public abstract class Slicer {
     public Point getPos() {
         return pos;
     }
-
 
     public abstract void spawn(ShadowDefend shadowDefend);
 

@@ -5,25 +5,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AirSupport extends Tower {
-
+    // Constants
     private static final String IMG_PATH = "res/images/airsupport.png";
     private static final int PRICE = 500;
     private static final int SPEED = 3;
+    private static final int START_OFFSET = - 10;
+    private static final int TO_MS = 1000;
+
+    private double dropTime;
+
+    // Boolean oscillator
     private static boolean isHorizontal = true;
+    // Lets each individual plane assume a direction
     private boolean isHorizontalIndividual = true;
+    // Checks if plane has been placed anywhere
     private boolean placed = false;
+
     private DrawOptions rotation;
     private StopWatch stopWatch;
-    private double dropTime;
-    private ArrayList<Bomb> bombs = new ArrayList<>();
+    private final ArrayList<Bomb> bombs = new ArrayList<>();
 
-
-    private static final int START_OFFSET = - 10;
-
-
+    // Constructor
     public AirSupport(Point pos) {
         super(pos, IMG_PATH, PRICE);
-
     }
 
     @Override
@@ -40,7 +44,7 @@ public class AirSupport extends Tower {
     @Override
     public void update(List<Slicer> slicerList, ShadowDefend shadowDefend)
     {
-
+        // Only run once per AirSupport
         if(!placed)
         {
             stopWatch = new StopWatch();
@@ -52,9 +56,7 @@ public class AirSupport extends Tower {
             }
             else
             {
-
                 setPos(new Point(ShadowDefend.getUserInput().getMouseX(), START_OFFSET ));
-
             }
 
             placed = true;
@@ -63,23 +65,26 @@ public class AirSupport extends Tower {
             dropTime = dropTime();
         }
 
+        // Determines the pos of the plane each update
+        // If its a horizontal plane
         Point newPos;
         if(isHorizontalIndividual)
         {
             rotation.setRotation(Math.PI/2);
             newPos = new Point( getPos().x +  SPEED * ShadowDefend.getTimeScale(), getPos().y);
         }
+        // If its a vert plane
         else
         {
             rotation.setRotation(Math.PI);
             newPos = new Point( getPos().x , getPos().y +  SPEED * ShadowDefend.getTimeScale());
         }
-
+        // Moves the plane
         setPos(newPos);
 
         draw(rotation);
-
-        if(stopWatch.lap() >= dropTime/ShadowDefend.getTimeScale() && shadowDefend.inPlay(this.getPos(), START_OFFSET))
+        // Bomb dropping logic
+        if(stopWatch.lapMS() >= dropTime/ShadowDefend.getTimeScale() && shadowDefend.inPlay(this.getPos(), START_OFFSET))
         {
             // drop
             stopWatch.reset();
@@ -87,15 +92,13 @@ public class AirSupport extends Tower {
 
             bombs.add(new Bomb(newPos));
         }
-
-        bombs.removeIf(bomb -> bomb.drop(slicerList));
-
-
+        // Remove bombs as necessary
+        bombs.removeIf(bomb -> bomb.drop(slicerList, shadowDefend));
     }
-
+    // TO_MS converts the random time from seconds to ms
     private double dropTime()
     {
-        return (Math.random() + 1)*1000;
+        return (Math.random() + 1)*TO_MS;
     }
 
     public boolean isBombsEmpty()

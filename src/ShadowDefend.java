@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 
-// TODO: check spec
+// TODO: check spec, java docs
 
 // TODO: every class: commenting, check modifiers, condensing if neccassary
 
@@ -30,12 +30,12 @@ public class ShadowDefend extends AbstractGame {
     private static final int SUPER_TANK_X = TANK_X + 120;
     private static final int AIR_SUPPORT_X = SUPER_TANK_X + 120;
     private static final int TOWER_Y = 40;
-    private static final int INITAL_CASH = 500;
+    private static final int INITIAL_CASH = 500;
     private static final int INITIAL_TIMESCALE = 1;
     private static final int EXTRA_PADDING = 10;
     private static final int PRICE_VER_OFFSET = 50;
     private static final int PRICE_HOR_OFFSET = 23;
-    // Cash per wave function
+    // Cash per wave function constants
     private static final int CASH_Y = 150;
     private static final int CASH_M = 100;
     private static final int CASH_STR_X_OFFSET = 50;
@@ -62,7 +62,7 @@ public class ShadowDefend extends AbstractGame {
     // ints
     private int lives = INITIAL_LIVES;
     private int levelIndex = 0;
-    private int cash = INITAL_CASH;
+    private int cash = INITIAL_CASH;
     private int waveNum = 1;
     private int waveEventIndex = 0;
 
@@ -130,7 +130,7 @@ public class ShadowDefend extends AbstractGame {
         // Runs the game
         shadowDefend.run();
     }
-
+    // Called 60 times per second to update the game
     @Override
     public void update(Input input) {
 
@@ -211,7 +211,7 @@ public class ShadowDefend extends AbstractGame {
 
             levelComplete = false;
             // Resets cash
-            cash = INITAL_CASH;
+            cash = INITIAL_CASH;
         }
 
     }
