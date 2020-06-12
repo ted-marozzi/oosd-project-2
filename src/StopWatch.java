@@ -1,5 +1,5 @@
 public class StopWatch {
-    //TODO : FIX WRONG UASGE OF THIS CLASS
+
     private long start;
     private static final long MS = 1000000;
 

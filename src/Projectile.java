@@ -25,7 +25,7 @@ public class Projectile
 
         if(this.pos.distanceTo(slicer.getPos()) < 7*timeScale)
         {
-            slicer.dealDamage(this.damage);
+            slicer.dealDamage(this.damage, shadowDefend);
             return false;
         }
 

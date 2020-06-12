@@ -5,19 +5,19 @@ public class ApexSlicer extends Slicer {
     private static final int HEALTH = 25, REWARD = 150, PENALTY = 16;
     private static final double SPEED = 0.5;
 
-    public ApexSlicer(Point start, ShadowDefend shadowDefend) {
-        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start, shadowDefend);
+    public ApexSlicer(Point start) {
+        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start);
     }
 
     @Override
-    public void spawn() {
-        for(int i = 0; i < 4; i++)
-        {
+    public void spawn(ShadowDefend shadowDefend) {
+        for (int i = 0; i < 4; i++) {
             Point pos = super.getPos();
-            Point tmp = new Point(Math.random()-0.5, Math.random()-0.5);
+            Point tmp = new Point(Math.random() - 0.5, Math.random() - 0.5);
             pos = pos.asVector().add(tmp.asVector().mul(getSCATTER())).asPoint();
-            Slicer slicer = new MegaSlicer(pos, getShadowDefend());
+            Slicer slicer = new MegaSlicer(pos);
             slicer.setPointsReached(getPointsReached());
+            shadowDefend.addSlicer(slicer);
 
         }
 

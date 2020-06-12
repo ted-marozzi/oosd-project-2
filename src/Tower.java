@@ -13,19 +13,13 @@ public abstract class Tower {
     private final Image img;
     private final int price;
     private Point pos;
-    private DrawOptions drawOptions;
 
 
 
     protected Tower(Point pos, String imgPath, int price) {
         this.img = new Image(imgPath);
         this.pos = pos;
-
-
         this.price = price;
-
-
-
     }
 
     public Rectangle getBoundingBox()

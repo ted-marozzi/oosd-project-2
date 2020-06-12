@@ -7,12 +7,12 @@ public class RegularSlicer extends Slicer {
     private static final int HEALTH = 1, REWARD = 2, PENALTY = 1;
     private static final double SPEED = 2;
 
-    public RegularSlicer(Point start, ShadowDefend shadowDefend) {
-        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start, shadowDefend);
+    public RegularSlicer(Point start) {
+        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start);
     }
 
     @Override
-    public void spawn() {
+    public void spawn(ShadowDefend shadowDefend) {
         return;
     }
 }

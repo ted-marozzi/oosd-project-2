@@ -10,19 +10,20 @@ public class SuperSlicer extends Slicer {
 
 
 
-    public SuperSlicer(Point start, ShadowDefend shadowDefend) {
-        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start, shadowDefend);
+    public SuperSlicer(Point start) {
+        super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start);
     }
 
     @Override
-    public void spawn() {
+    public void spawn(ShadowDefend shadowDefend) {
         for(int i = 0; i < 2; i++)
         {
             Point pos = super.getPos();
             Point tmp = new Point(Math.random()-0.5, Math.random()-0.5);
             pos = pos.asVector().add(tmp.asVector().mul(getSCATTER())).asPoint();
-            Slicer slicer = new RegularSlicer(pos, super.getShadowDefend());
+            Slicer slicer = new RegularSlicer(pos);
             slicer.setPointsReached(getPointsReached());
+            shadowDefend.addSlicer(slicer);
         }
 
     }
