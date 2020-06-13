@@ -9,10 +9,8 @@ public class WaveEvent {
     private String slicerType;
     private int delay;
     private int numToSpawn;
-
     private int spawnDelay;
     private int numSpawned = 0;
-
     private boolean inProgress = false;
     private StopWatch stopWatch;
 

@@ -158,7 +158,11 @@ public class ShadowDefend extends AbstractGame {
         }
         // Level is passed but game not won
         if (levelComplete && !isWinner) {
+
             levelPassed(input);
+            // Resets the cash.
+            cash = INITIAL_CASH;
+
             return;
         }
         // Level is passed and game is won
@@ -170,8 +174,16 @@ public class ShadowDefend extends AbstractGame {
             }
             return;
         }
+
+        // Begins the wave
+        beginWave(input);
+        // Updates the Slicers does this first so airplane is drawn over the top of
+        //  the slicers.
+        updateSlicers();
+
         // Checks if the user bought a tower and
         checkBought(input);
+
 
         // Updates the towers
         for (Tower tower : towerList) {
@@ -185,10 +197,7 @@ public class ShadowDefend extends AbstractGame {
             }
             return false;
         });
-        // Begins the wave
-        beginWave(input);
-        // Updates the Slicers
-        updateSlicers();
+
 
         // Removes projectiles if they hit
         projectileList.removeIf(projectile -> !projectile.update(timeScale, this));
