@@ -1,18 +1,24 @@
 import bagel.util.Point;
-import bagel.util.Vector2;
 
-import java.util.Random;
-
+/**
+ * A type of slicer.
+ */
 public class SuperSlicer extends Slicer {
     private static final String IMG_PATH = "res/images/superslicer.png";
     private static final int HEALTH = 1, REWARD = 15, PENALTY = 2;
     private static final double SPEED = 1.5;
     private static final int CHILDREN_TO_SPAWN = 2;
 
+    /**
+     * @param start The start of the SuperSlicer.
+     */
     public SuperSlicer(Point start) {
         super(IMG_PATH, HEALTH, SPEED, REWARD, PENALTY, start);
     }
 
+    /**
+     * @param shadowDefend The game.
+     */
     // Spawns 2 regular slicers
     @Override
     public void spawn(ShadowDefend shadowDefend) {

@@ -71,9 +71,9 @@ public class AirSupport extends Tower {
             rotation = new DrawOptions();
             isHorizontalIndividual = isHorizontal;
             if (isHorizontalIndividual) {
-                setPos(new Point(START_OFFSET, ShadowDefend.getUserInput().getMouseY()));
+                setPos(new Point(START_OFFSET, shadowDefend.getUserInput().getMouseY()));
             } else {
-                setPos(new Point(ShadowDefend.getUserInput().getMouseX(), START_OFFSET));
+                setPos(new Point(shadowDefend.getUserInput().getMouseX(), START_OFFSET));
             }
 
             placed = true;
@@ -87,19 +87,19 @@ public class AirSupport extends Tower {
         Point newPos;
         if (isHorizontalIndividual) {
             rotation.setRotation(Math.PI / 2);
-            newPos = new Point(getPos().x + SPEED * ShadowDefend.getTimeScale(), getPos().y);
+            newPos = new Point(getPos().x + SPEED * shadowDefend.getTimeScale(), getPos().y);
         }
         // If its a vert plane
         else {
             rotation.setRotation(Math.PI);
-            newPos = new Point(getPos().x, getPos().y + SPEED * ShadowDefend.getTimeScale());
+            newPos = new Point(getPos().x, getPos().y + SPEED * shadowDefend.getTimeScale());
         }
         // Moves the plane
         setPos(newPos);
 
         draw(rotation);
         // Bomb dropping logic
-        if (stopWatch.lapMS() >= dropTime / ShadowDefend.getTimeScale() && shadowDefend.inPlay(this.getPos(), START_OFFSET)) {
+        if (stopWatch.lapMS() >= dropTime / shadowDefend.getTimeScale() && shadowDefend.inPlay(this.getPos(), START_OFFSET)) {
             // drop
             stopWatch.reset();
             dropTime = dropTime();

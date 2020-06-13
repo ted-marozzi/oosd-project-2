@@ -12,9 +12,9 @@ public class Level
 {
 
     // Variables
-    private TiledMap map;
-    private List<Point> polyLines;
-    private Point start;
+    private final TiledMap map;
+    private final List<Point> polyLines;
+    private final Point start;
 
     /**
      * @param levelPath string path to the file location of the .tmx level fle.

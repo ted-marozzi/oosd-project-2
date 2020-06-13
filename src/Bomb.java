@@ -41,8 +41,6 @@ public class Bomb
         img.draw(this.pos.x, this.pos.y);
         if(stopWatch.lapMS()  >= DET_TIME )
         {
-
-            // TODO: Fix concurent modification
             // explode, iterator used because slicers get removed from list
 
             try {
@@ -55,7 +53,7 @@ public class Bomb
             }
             catch (ConcurrentModificationException ignored)
             {
-                // Ignore because slicer in question has been deleted hence this is ok.
+                // Ignore because slicer in question has been deleted hence this is safe.
             }
 
 

@@ -2,7 +2,6 @@ import bagel.DrawOptions;
 import bagel.Image;
 import bagel.util.Point;
 import bagel.util.Vector2;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -97,7 +96,7 @@ public abstract class Slicer {
 
     /**
      * @param timeScale The time scale modifier.
-     * @param shadowDefend
+     * @param shadowDefend The game.
      */
     // Updates an individual enemy dependant on the position
     public void update(double timeScale, ShadowDefend shadowDefend) {
@@ -130,40 +129,49 @@ public abstract class Slicer {
 
     }
 
-    // Updates all the slicers hence static
-    public static void update(ShadowDefend shadowDefend) {
-        // Every slicer perform the update and remove dead enemies
-        // Allows for removing enemies if player defeats them also
-        Iterator<Slicer> it = shadowDefend.getSlicerList().iterator();
-        while (it.hasNext()) {
-            Slicer slicer = it.next();
-            slicer.update(ShadowDefend.getTimeScale(), shadowDefend);
-
-            if (!slicer.isAlive) {
-                it.remove();
-            }
-        }
+    /**
+     * @return If the slicer is alive or not.
+     */
+    public boolean isAlive() {
+        return isAlive;
     }
 
-
+    /**
+     * @return The position of the slicer.
+     */
     public Point getPos() {
         return pos;
     }
 
+    /**
+     * @param shadowDefend The game.
+     */
     public abstract void spawn(ShadowDefend shadowDefend);
 
+    /**
+     * @return The number of points reached by the slicer.
+     */
     public int getPointsReached() {
         return pointsReached;
     }
 
+    /**
+     * @return The SCATTER constant 10.
+     */
     public static double getSCATTER() {
         return SCATTER;
     }
 
+    /**
+     * @return The HALF_PX constant 0.5.
+     */
     public static double getHALF_PX() {
         return HALF_PX;
     }
 
+    /**
+     * @param pointsReached The number of points reached by the slicer.
+     */
     public void setPointsReached(int pointsReached) {
         this.pointsReached = pointsReached;
     }

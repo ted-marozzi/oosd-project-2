@@ -7,17 +7,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-
-// TODO: check spec, java docs
-
-// TODO: every class: commenting, check modifiers, condensing if neccassary
-
 /**
+ * Shadow Defend is a tower defence game where the player must attempt to defend the map from
+ * enemies using towers. As such, there are two main components of the game: slicers (the enemy),
+ * and towers.
+ *
  * Main class of the shadowDefend game, it is responsible for maintaining lists of waveEvents, towers and enemies ect.
  * Also controls a most of the game logic inc tracking cash and lives.
+ * @author Edward Marozzi - 910193.
  */
 public class ShadowDefend extends AbstractGame {
 
@@ -57,7 +58,7 @@ public class ShadowDefend extends AbstractGame {
     private static final String WAVE_IN_PROG = "Wave In Progress";
     private static final String AWAITING = "Awaiting Start";
     private static final String LOSER = "You lost!";
-    private static final String LEVEL_PASSSED = "You have completed the level!";
+    private static final String LEVEL_PASSED = "You have completed the level!";
     private static final String CONTINUE = "Click to continue.";
     private static final String CLOSE_WINDOW = "Press any key to close the window.";
     private static final String SPAWN = "spawn";
@@ -187,7 +188,7 @@ public class ShadowDefend extends AbstractGame {
         // Begins the wave
         beginWave(input);
         // Updates the Slicers
-        Slicer.update(this);
+        updateSlicers();
 
         // Removes projectiles if they hit
         projectileList.removeIf(projectile -> !projectile.update(timeScale, this));
@@ -211,7 +212,7 @@ public class ShadowDefend extends AbstractGame {
         // Cleans the map
         deleteTowers();
 
-        drawStackedStrings(LEVEL_PASSSED, CONTINUE);
+        drawStackedStrings(LEVEL_PASSED, CONTINUE);
         // Left click to continue
         if (input.wasPressed(MouseButtons.LEFT)) {
             // Updated status
@@ -296,6 +297,23 @@ public class ShadowDefend extends AbstractGame {
     // Add a slicer to the slicer list can be used from outside shadow defend class
     public void addSlicer(Slicer slicer) {
         slicerList.add(slicer);
+    }
+
+    private void updateSlicers()
+    {
+
+        // Every slicer perform the update and remove dead enemies
+        // Allows for removing enemies if player defeats them also
+        Iterator<Slicer> it = slicerList.iterator();
+        while (it.hasNext()) {
+            Slicer slicer = it.next();
+            slicer.update(timeScale, this);
+
+            if (!slicer.isAlive()) {
+                it.remove();
+            }
+        }
+
     }
 
     /*
@@ -403,13 +421,13 @@ public class ShadowDefend extends AbstractGame {
                 }
                 // if all the slicers have been spawned
                 if (wave.getNumSpawned() >= wave.getNumToSpawn()) {
-                    endWaveEvent(this);
+                    endWaveEvent();
                 }
             }
             // Delay event action
             if (wave.getAction().equals(DELAY)) {
                 if (wave.checkTimer() >= wave.getDelay() / timeScale) {
-                    endWaveEvent(this);
+                    endWaveEvent();
                 }
             }
         // If all the slicers are
@@ -463,32 +481,32 @@ public class ShadowDefend extends AbstractGame {
     private void beginWave(Input input) {
         if (input.wasPressed(Keys.S) && !getCurrentWaveEvent().getInProgress() && slicerList.isEmpty()) {
             isWaveInProg = true;
-            beginWaveEvent(this);
+            beginWaveEvent();
         }
 
     }
 
     // begins a single wave event
-    private void beginWaveEvent(ShadowDefend shadowDefend) {
+    private void beginWaveEvent() {
 
         WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(true);
         wave.startTimer();
 
         if (wave.getAction().equals(SPAWN)) {
-            wave.spawnSlicer(shadowDefend);
+            wave.spawnSlicer(this);
         }
     }
 
     // Ends a single wave event
-    private void endWaveEvent(ShadowDefend shadowDefend) {
+    private void endWaveEvent() {
 
         WaveEvent wave = waveEvents.get(waveEventIndex);
         wave.setInProgress(false);
         waveEventIndex++;
         // If wave event is part of the same wave number begin immediately
         if (waveEvents.get(waveEventIndex).getWaveNumber() == waveEvents.get(waveEventIndex - 1).getWaveNumber()) {
-            beginWaveEvent(shadowDefend);
+            beginWaveEvent();
 
         } else {
 
@@ -545,11 +563,11 @@ public class ShadowDefend extends AbstractGame {
 
         // Draws the time scale
         DrawOptions drawOptions = new DrawOptions();
-        if (ShadowDefend.getTimeScale() > 1) {
+        if (timeScale > 1) {
             drawOptions.setBlendColour(Colour.GREEN);
         }
 
-        String TimeScaleStr = "Time Scale: " + ShadowDefend.getTimeScale();
+        String TimeScaleStr = "Time Scale: " + timeScale;
         font.drawString(TimeScaleStr, (double) WIDTH / 4 - font.getWidth("Time Scale: ") / 2, HEIGHT - PADDING, drawOptions);
 
         // Draws the lives
@@ -603,14 +621,14 @@ public class ShadowDefend extends AbstractGame {
     /**
      * @return returns the games current timeScale multiplier
      */
-    public static Input getUserInput() {
+    public Input getUserInput() {
         return userInput;
     }
 
     /**
      * @return The games current timeScale multiplier.
      */
-    public static double getTimeScale() {
+    public double getTimeScale() {
         return timeScale;
     }
 
@@ -640,13 +658,6 @@ public class ShadowDefend extends AbstractGame {
      */
     public List<Projectile> getProjectileList() {
         return projectileList;
-    }
-
-    /**
-     * @return The list of slicers in the game.
-     */
-    public List<Slicer> getSlicerList() {
-        return slicerList;
     }
 
     /**

@@ -10,7 +10,9 @@ import java.util.List;
 // Both tanks use this
 public abstract class GroundTower extends Tower
 {
-    private int range, damage, coolDown;
+    private final int range;
+    private final int damage;
+    private final int coolDown;
     StopWatch stopWatch;
     Point pos;
     String projectilePath;

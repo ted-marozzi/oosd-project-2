@@ -23,6 +23,5 @@ public class RegularSlicer extends Slicer {
     // Doesn't spawn upon death
     @Override
     public void spawn(ShadowDefend shadowDefend) {
-        return;
     }
 }
