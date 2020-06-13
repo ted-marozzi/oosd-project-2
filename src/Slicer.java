@@ -5,6 +5,9 @@ import bagel.util.Vector2;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Main slicer class which contains the logic for all slicer types.
+ */
 // Parent slicer class
 public abstract class Slicer {
 
@@ -19,7 +22,8 @@ public abstract class Slicer {
 
     private final DrawOptions drawOptions;
     private boolean isAlive = true;
-    private static final int SCATTER = 10;
+    private static final double SCATTER = 10;
+    private static final double HALF_PX = 0.5;
 
     // Only accessed by slicer objects
     protected Slicer(String imgPath, int health, double speed, int reward, int penalty, Point start) {
@@ -33,21 +37,32 @@ public abstract class Slicer {
     }
 
 
-    // Moves player to PlayerPoint, with draw options setting rotation
+    /**
+     * @param pos The position the slicer is moved too.
+     * @param drawOptions The options specifying how to draw the slicer.
+     */
+    // Moves player to pos, with draw options setting rotation
     // Moves player when given a rotation argument
-    public void moveTo(Point playerPoint, DrawOptions drawOptions) {
-        this.pos = playerPoint;
-        slicerImg.draw(pos.x, pos.y, drawOptions);
+    public void moveTo(Point pos, DrawOptions drawOptions) {
+        this.pos = pos;
+        slicerImg.draw(this.pos.x, this.pos.y, drawOptions);
 
     }
 
+    /**
+     * @param pos The point to move the slicer too
+     */
     // Moves player to given point when no rotation is applied
-    public void moveTo(Point playerPoint) {
-        this.pos = playerPoint;
+    public void moveTo(Point pos) {
+        this.pos = pos;
         slicerImg.draw(pos.x, pos.y);
 
     }
 
+    /**
+     * @param damage The damage to deal to itself.
+     * @param shadowDefend The game.
+     */
     // Deals damage to slicers
     public void dealDamage(int damage, ShadowDefend shadowDefend) {
         this.health = health - damage;
@@ -58,7 +73,6 @@ public abstract class Slicer {
             shadowDefend.addCash(this.reward);
         }
     }
-
 
     // Adds the unit vector direction to current point
     private Point calcNextPos(Vector2 direction, double timeScale) {
@@ -81,6 +95,10 @@ public abstract class Slicer {
         return ((polyLines.get(nextPoint)).asVector().sub(this.pos.asVector())).normalised();
     }
 
+    /**
+     * @param timeScale The time scale modifier.
+     * @param shadowDefend
+     */
     // Updates an individual enemy dependant on the position
     public void update(double timeScale, ShadowDefend shadowDefend) {
         List<Point> polyLines = shadowDefend.getCurrentLevel().getPolyLines();
@@ -127,6 +145,7 @@ public abstract class Slicer {
         }
     }
 
+
     public Point getPos() {
         return pos;
     }
@@ -137,11 +156,16 @@ public abstract class Slicer {
         return pointsReached;
     }
 
-    public static int getSCATTER() {
+    public static double getSCATTER() {
         return SCATTER;
+    }
+
+    public static double getHALF_PX() {
+        return HALF_PX;
     }
 
     public void setPointsReached(int pointsReached) {
         this.pointsReached = pointsReached;
     }
+
 }

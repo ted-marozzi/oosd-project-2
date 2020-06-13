@@ -4,6 +4,9 @@ import bagel.util.Vector2;
 
 import java.util.List;
 
+/**
+ * Class used by tank and ground tower.
+ */
 // Both tanks use this
 public abstract class GroundTower extends Tower
 {
@@ -26,6 +29,10 @@ public abstract class GroundTower extends Tower
 
     }
 
+    /**
+     * @param slicerList list of slicers.
+     * @param shadowDefend game in which slicers exist.
+     */
     // Updates the ground towers
     public void update(List<Slicer> slicerList, ShadowDefend shadowDefend) {
 

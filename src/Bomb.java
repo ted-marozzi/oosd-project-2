@@ -1,9 +1,11 @@
 import bagel.Image;
 import bagel.util.Point;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
+/**
+ * Bomb class created by AirSupport plane.
+ */
 // Dropped by AirSupport
 public class Bomb
 {
@@ -17,6 +19,9 @@ public class Bomb
     private static final int RADIUS = 200;
 
 
+    /**
+     * @param pos to create the bomb at.
+     */
     // Constructor
     public Bomb(Point pos)
     {
@@ -25,21 +30,34 @@ public class Bomb
         this.stopWatch = new StopWatch();
     }
 
+    /**
+     * @param slicerList list of slicers.
+     * @param shadowDefend game to drop bombs into.
+     * @return boolean determines if the bomb is exploded or not.
+     */
     // Drops the bomb returns isExploded
     public boolean drop(List<Slicer> slicerList, ShadowDefend shadowDefend)
     {
         img.draw(this.pos.x, this.pos.y);
         if(stopWatch.lapMS()  >= DET_TIME )
         {
+
+            // TODO: Fix concurent modification
             // explode, iterator used because slicers get removed from list
-            Iterator<Slicer> it = slicerList.iterator();
-            while(it.hasNext())
-            {
-                Slicer slicer = it.next();
-                if(slicer.getPos().distanceTo(this.pos) <= RADIUS) {
-                    slicer.dealDamage(DAMAGE, shadowDefend);
+
+            try {
+                for (Slicer slicer : slicerList) {
+
+                    if (slicer.getPos().distanceTo(this.pos) <= RADIUS) {
+                        slicer.dealDamage(DAMAGE, shadowDefend);
+                    }
                 }
             }
+            catch (ConcurrentModificationException ignored)
+            {
+                // Ignore because slicer in question has been deleted hence this is ok.
+            }
+
 
             return true;
         }

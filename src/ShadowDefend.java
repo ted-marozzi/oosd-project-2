@@ -15,6 +15,10 @@ import java.util.Scanner;
 
 // TODO: every class: commenting, check modifiers, condensing if neccassary
 
+/**
+ * Main class of the shadowDefend game, it is responsible for maintaining lists of waveEvents, towers and enemies ect.
+ * Also controls a most of the game logic inc tracking cash and lives.
+ */
 public class ShadowDefend extends AbstractGame {
 
     // int Constants
@@ -126,10 +130,15 @@ public class ShadowDefend extends AbstractGame {
      * The entry point for the program.
      */
     public static void main(String[] args) {
+        // Constructs and runs the game
         ShadowDefend shadowDefend = new ShadowDefend();
         // Runs the game
         shadowDefend.run();
     }
+
+    /**
+     * @param input: is the user input each update.
+     */
     // Called 60 times per second to update the game
     @Override
     public void update(Input input) {
@@ -144,10 +153,12 @@ public class ShadowDefend extends AbstractGame {
         // Out of lives
         if (lives <= 0) {
             gameLost(input);
+            return;
         }
         // Level is passed but game not won
         if (levelComplete && !isWinner) {
             levelPassed(input);
+            return;
         }
         // Level is passed and game is won
         if (isWinner) {
@@ -156,6 +167,7 @@ public class ShadowDefend extends AbstractGame {
             if (input.wasPressed(MouseButtons.LEFT)) {
                 close();
             }
+            return;
         }
         // Checks if the user bought a tower and
         checkBought(input);
@@ -176,6 +188,7 @@ public class ShadowDefend extends AbstractGame {
         beginWave(input);
         // Updates the Slicers
         Slicer.update(this);
+
         // Removes projectiles if they hit
         projectileList.removeIf(projectile -> !projectile.update(timeScale, this));
 
@@ -206,15 +219,23 @@ public class ShadowDefend extends AbstractGame {
             isPlacing = false;
             isWaveInProg = false;
             lives = INITIAL_LIVES;
-            nextLevel();
+
+            if (levelIndex < levelList.size() - 1) {
+                this.levelIndex++;
+            } else {
+                // Winner winner chicken dinner
+                isWinner = true;
+            }
             deleteTowers();
 
             levelComplete = false;
             // Resets cash
             cash = INITIAL_CASH;
+            AirSupport.resetIsHorizontal();
         }
 
     }
+
 
     // Is called when plays lose all of there lives
     private void gameLost(Input input)
@@ -238,11 +259,17 @@ public class ShadowDefend extends AbstractGame {
     }
 
 
+    /**
+     * @param cash is the amount of cash to add to the players total
+     */
     // Allows manipulation of the cash from outside shadow defend
     public void addCash(int cash) {
         this.cash = this.cash + cash;
     }
 
+    /**
+     * @param cash is the cash to minus from the players total cash
+     */
     public void minusCash(int cash) {
         this.cash = this.cash - cash;
     }
@@ -262,29 +289,27 @@ public class ShadowDefend extends AbstractGame {
 
     }
 
-    // Go to next level
-    private void nextLevel() {
 
-        if (levelIndex < levelList.size() - 1) {
-            this.levelIndex++;
-        } else {
-        // Winner winner chicken dinner
-            isWinner = true;
-        }
-
-    }
+    /**
+     * @param slicer is the slicer to be added to the games slicer list
+     */
     // Add a slicer to the slicer list can be used from outside shadow defend class
     public void addSlicer(Slicer slicer) {
         slicerList.add(slicer);
     }
 
-    /*******************************************************************************************************************
+    /*
      * Tower functions
      ******************************************************************************************************************/
     private boolean isAirSupport(Tower tower) {
         return tower instanceof AirSupport;
     }
 
+    /**
+     * @param pos is the position to check if in play.
+     * @param offset is an offset that can be applied to extend the playing area providing padding.
+     * @return a boolean determining if the pos is in play or not.
+     */
     // Checks if point is in play, an offset can be applied to give extra padding around the area to check
     public boolean inPlay(Point pos, int offset) {
 
@@ -362,7 +387,7 @@ public class ShadowDefend extends AbstractGame {
         towerList.clear();
     }
 
-    /*******************************************************************************************************************
+    /*
      * Waves Managing
      ******************************************************************************************************************/
     private void updateWaveEvent(double timeScale) {
@@ -473,7 +498,7 @@ public class ShadowDefend extends AbstractGame {
     }
 
 
-    /*******************************************************************************************************************
+    /*
      * Drawing
      ******************************************************************************************************************/
     // Draws the panels for the game
@@ -571,54 +596,91 @@ public class ShadowDefend extends AbstractGame {
         return drawOptions;
     }
 
-    /*******************************************************************************************************************
-     * Getters and setters
+    /*
+     *Getters and setters
      ******************************************************************************************************************/
+
+    /**
+     * @return returns the games current timeScale multiplier
+     */
     public static Input getUserInput() {
         return userInput;
     }
 
+    /**
+     * @return The games current timeScale multiplier.
+     */
     public static double getTimeScale() {
         return timeScale;
     }
 
+    /**
+     * @return The current Level of the game.
+     */
     public Level getCurrentLevel() {
         return levelList.get(levelIndex);
     }
 
+    /**
+     * @param lives The players current lives.
+     */
     public void setLives(int lives) {
         this.lives = lives;
     }
 
+    /**
+     * @return The current players lives
+     */
     public int getLives() {
         return lives;
     }
 
+    /**
+     * @return The list of ground tower projectiles.
+     */
     public List<Projectile> getProjectileList() {
         return projectileList;
     }
 
+    /**
+     * @return The list of slicers in the game.
+     */
     public List<Slicer> getSlicerList() {
         return slicerList;
     }
 
+    /**
+     * @return The string "delay" found in waves.txt used to determine the type of waveEvent.
+     */
     // Using this to avoid having to copy's of these static
     public static String getDELAY() {
         return DELAY;
     }
 
+    /**
+     * @return The string "spawn" found in waves.txt used to determine the type of waveEvent.
+     */
     public static String getSPAWN() {
         return SPAWN;
     }
 
+    /**
+     * @return The height of the game panel.
+     */
     public static int getHEIGHT() {
         return HEIGHT;
     }
 
+    /**
+     * @return The width of the game panel.
+     */
     public static int getWIDTH() {
         return WIDTH;
     }
 
+    /**
+     * @return The origin of the game window.
+     */
     public static int getORIGIN() {
         return ORIGIN;
     }
